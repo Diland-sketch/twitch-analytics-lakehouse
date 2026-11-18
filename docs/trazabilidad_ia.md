@@ -39,3 +39,12 @@ modo incompatible por DDL estricto + append y se agregaron regresiones locales
 con dobles e integración optativa explícitamente artificial. No hubo cambios de
 contrato, transformaciones ni reglas analíticas. La validación real de la
 corrección queda pendiente; ver validacion.md y correccion_spark_connect.md.
+
+## Confirmación de Bronze y prevención operativa
+
+El equipo confirmó `5994433` en Databricks: 3.051.733 filas de fuente y Bronze,
+Delta con 2 archivos y 43.938.329 bytes. Identificó código anterior en memoria tras
+Pull y lo resolvió reiniciando Python y ejecutando 00_config. Esta actualización
+solo modifica documentación; no altera módulos, notebooks, pruebas, datos ni tablas.
+Se revisaron estáticamente los escritores y tipos previstos de las demás capas.
+Sus ejecuciones reales siguen pendientes; no se presenta la revisión como prueba de runtime.

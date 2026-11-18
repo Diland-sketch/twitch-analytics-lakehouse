@@ -12,9 +12,14 @@ Presupuesto: **cero pesos**. Plataforma: **Databricks Free Edition**.
 - En la primera ejecución de I1, el equipo confirmó `100k_a.csv` cargado en el
   volumen, `00_config` operativo, `01_artificial_checks` en **PASS** y bootstrap
   preparado. `03_bronze` falló con `[UNSUPPORTED_OPERATION] errorifexists is not supported`.
-- Esta corrección sustituye ese modo de escritura por creación DDL protegida y append.
-  **La corrección aún no ha sido ejecutada en Databricks**. No hay conteos reales
-  de ingesta ni Bronze/Silver/Gold exitosas confirmadas.
+- El equipo confirmó que el commit `5994433` funciona en Bronze después de reiniciar
+  Python y ejecutar de nuevo `00_config`: **3.051.733 filas de origen y Bronze**, con
+  conciliación de conteos del 100%. Tabla `workspace.twitch_lakehouse.bronze_interactions`,
+  Delta, 2 archivos físicos, 43.938.329 bytes reportados por `DESCRIBE DETAIL`.
+  Son resultados reportados por el equipo, no una ejecución del asistente.
+- Silver, cuarentena, Gold y candidatas siguen pendientes de ejecución real confirmada.
+  Ver [prevención y pasos seguros](docs/operacion_silver_gold.md): después de un Pull
+  que cambie módulos Python, reiniciar Python y ejecutar nuevamente `00_config`.
 - Validaciones realizadas y pendientes: [docs/validacion.md](docs/validacion.md).
 - Kafka es obligatorio para el proyecto completo; su integración queda pendiente
   a cargo de Anghela. **I1 no demuestra streaming ni Kafka**.

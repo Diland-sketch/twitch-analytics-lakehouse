@@ -8,11 +8,11 @@ de verificación, sin notas, porcentajes ni requisitos atribuidos al docente.
 | Spark operativo | Smoke test artificial reportado por el equipo | Reportado; notebook original no incluido |
 | Repositorio mantenible | Rama, README, configuración y módulos separados | Preparado |
 | Contrato verificado | Enlaces primarios, cinco campos y supuestos declarados | Documentado; revisar archivo cargado |
-| Bronze real | Archivo cargado, tabla y conteo reconciliado | Pendiente Databricks |
+| Bronze real | Archivo cargado, tabla Delta y conteo reconciliado | Confirmado por equipo: 3.051.733 filas; ver validacion.md |
 | Silver y calidad | Tipos, rechazos, duplicados y conciliación | Código preparado; ejecución pendiente |
 | Gold | Agregado por streamer y sumas conciliadas | Código preparado; ejecución pendiente |
 | Reconstrucción segura | Vista previa y candidata sin tocar Silver | Código preparado; ejecución pendiente |
-| Pruebas | Resultados en validacion.md y notebook 01 | Local parcial; Spark pendiente |
+| Pruebas | Resultados en validacion.md y notebook 01 | Locales registradas; 01 PASS reportado; otras capas pendientes |
 | Kafka obligatorio | Integración y evidencia de Anghela en siguiente incremento | Fuera de I1, pendiente |
 | Presentación honesta | Separar estado reportado, artificial y real | Guía disponible |
 

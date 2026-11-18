@@ -41,9 +41,16 @@ enumera `errorifexists`; esto no demuestra su soporte en el runtime concreto que
 rechazó la operación. No se atribuye una prohibición universal a Spark Connect.
 La [referencia de CREATE TABLE](https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-create-table-using)
 documenta DDL Delta y que `IF NOT EXISTS` ignora destinos existentes; por eso se omite.
-**DDL + append aún requiere validación en el workspace del equipo.**
+**Actualización de evidencia:** el equipo confirmó DDL + append en Bronze con el
+commit `5994433`, después de reiniciar Python y ejecutar de nuevo 00_config.
+Silver, cuarentena, Gold y candidatas siguen pendientes de confirmación real.
+Ver [evidencia](validacion.md) y [lecciones operativas](operacion_silver_gold.md).
 
 ## Actualizar la carpeta Git en Databricks
+
+El procedimiento de reintento de 03 que sigue documenta la recuperación original.
+**Bronze ya fue cargada exitosamente: para continuar I1 no reejecutar 03.**
+Aplicar desde ahora la [guía Silver/Gold](operacion_silver_gold.md).
 
 1. Detener cualquier ejecución en curso y anotar el valor local de `project_root`
    de `notebooks/00_config`. No mover ni volver a cargar `100k_a.csv`.

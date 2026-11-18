@@ -26,8 +26,13 @@ Todos los demás notebooks llaman `%run ./00_config` y reutilizan esa ruta.
 No se usa un widget para ella, porque `%run` ejecuta los widgets del notebook
 llamado con sus valores por defecto. La configuración de catálogo/esquema/volumen
 se selecciona solo en `00_config`.
-Si se cambia código importado, reiniciar la sesión Python y repetir configuración
-para evitar módulos antiguos en memoria.
+Después de cada Git Pull que actualice módulos Python importados, ejecutar
+`dbutils.library.restartPython()` en una celda separada y ejecutar de nuevo `00_config`
+en cada sesión afectada antes de la siguiente etapa. El reinicio pierde variables
+y DataFrames Python; no elimina las tablas Delta. Un archivo actualizado en disco
+no garantiza una función actualizada en memoria. Ver el diagnóstico de identidad y
+las comprobaciones de esquema en [operación Silver/Gold](operacion_silver_gold.md).
+Una actualización solo documental no exige reiniciar ni repetir etapas ya completadas.
 
 ## 2. Probar sin datos reales
 
