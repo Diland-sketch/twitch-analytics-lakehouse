@@ -27,8 +27,31 @@ El 100% indica igualdad de conteos, no certifica calidad de contenido ni ausenci
 de duplicados. Archivos y tamaño son una observación de esa ejecución, no invariantes.
 No se aportaron aquí salidas originales, hash de fuente, versión Spark ni versión
 Delta de la tabla: conservarlas como evidencia sin inventarlas.
-La estrategia DDL + append queda confirmada para Bronze en ese entorno; la ejecución
-real de Silver, cuarentena, Gold y candidatas sigue pendiente.
+El equipo confirmó después la ejecución completa de I1 en Databricks Free Edition:
+
+| Resultado real reportado | Valor |
+| --- | --- |
+| Silver: registros válidos persistidos | 3.051.733 |
+| Rechazados según las reglas implementadas | 0 |
+| Duplicados según la clave implementada | 0 |
+| Gold: streamers | 162.625 |
+| Interacciones conciliadas | 3.051.733 |
+| Minutos acumulados estimados | 95.887.110 |
+| Silver original / reconstruida | 3.051.733 / 3.051.733 |
+| exceptAll original → candidata | 0 diferencias |
+| exceptAll candidata → original | 0 diferencias |
+| Equivalencia reportada | True |
+
+Candidata existente: `workspace.twitch_lakehouse.silver_interactions_candidate_suffix`.
+La Silver original permaneció intacta. El literal accidental y el uso correcto del
+widget están en [reconstrucción](reconstruccion_silver.md).
+
+Estado: **I1 batch completado y verificado por el equipo**. Cero rechazos/duplicados
+se refiere exclusivamente a las reglas actuales, no a calidad universal del dataset.
+Los minutos son una estimación por intervalos, no tiempo exacto de atención.
+El asistente documenta los resultados reportados; no volvió a ejecutar ni consultó
+las tablas. No se han reportado explícitamente la regresión optativa de almacenamiento
+ni la prueba de reejecución bloqueada en el servicio: no se marcan como realizadas.
 
 ## Comprobaciones locales de esta corrección
 
@@ -47,20 +70,12 @@ Python 3.13.4, sin PySpark instalado. No se instalaron dependencias ni se descar
 Los dobles comprueban decisiones y orden de llamadas: **no ejecutan SQL, Spark ni
 Delta**, ni prueban la compatibilidad real con el servicio Databricks.
 
-## Verificaciones pendientes en Databricks
+## Evidencia y controles para conservar
 
-1. Actualizar rama y reiniciar Python como indica
-   [corrección Spark Connect](correccion_spark_connect.md).
-2. Repetir 01 tras actualizar para confirmar que las transformaciones siguen pasando.
-3. Opcional: ejecutar `tests.databricks_storage_checks.run_storage_checks(spark, cfg)`
-   desde una celda tras 00_config. Crea dos tablas pequeñas ARTIFICIALES con nombres
-   únicos; verifica contenido, tipos y bloqueo de repetición; **no las elimina**.
-   Pendiente de ejecutar; no se confunde con 01, que sigue sin persistencia.
-4. Bronze ya existe y fue conciliada: no reejecutar 03 ni volver a cargar el archivo.
-5. Seguir [operación Silver y Gold](operacion_silver_gold.md) para comprobar módulo
-   cargado, esquemas y destinos; ejecutar 04 y 05 por orden y revisar conciliaciones.
-6. Comprobar bloqueo al repetir y que no cambian filas ni versión Delta.
-7. Vista previa de 06 y candidata con sufijo nuevo si se desea comprobar persistencia.
-
-Guardar commit, versión Spark, salidas, esquemas, conteos y errores. Cuotas, permisos,
-DDL, append y comportamiento del runtime requieren esta comprobación real.
+- Mantener las tablas actuales; no repetir las cargas para documentar resultados.
+- Conservar salidas originales de 01 y 03–06, DESCRIBE DETAIL/HISTORY, esquemas,
+  commit usado por cada ejecución, versión Spark y hash de la fuente cuando estén disponibles.
+  No se inventan fecha/hora exacta, versión Delta ni commit de la reconstrucción.
+- Las pruebas locales usan dobles; la ejecución real reportada ahora valida el
+  recorrido batch y la equivalencia de la candidata en ese workspace.
+- Kafka y el histórico completo siguen fuera de I1. La rúbrica oficial no fue aportada.

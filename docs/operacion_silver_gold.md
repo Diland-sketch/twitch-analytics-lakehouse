@@ -5,12 +5,14 @@
 Bronze confirmada por el equipo con `5994433`: 3.051.733 filas de origen y de
 `workspace.twitch_lakehouse.bronze_interactions`, Delta, 2 archivos físicos y
 43.938.329 bytes según DESCRIBE DETAIL. Ver [evidencia](validacion.md).
-La igualdad de conteos no equivale a validación de contenido; Silver hará la calidad.
+Actualización: el equipo confirmó también Silver, Gold y reconstrucción equivalente;
+ver [resultados I1](validacion.md). Esta guía conserva controles para futuras ejecuciones
+en destinos nuevos: no repetir las etapas sobre las tablas actuales.
 
 Esta actualización es exclusivamente documental. No cambia módulos, notebooks,
 contrato ni reglas analíticas; no modifica tablas. **No hace falta Pull ni reinicio
 por estos cambios documentales para continuar la demostración con 5994433.** Si la
-sesión ya usa la función corregida, continuar desde 04, sin repetir 03.
+sesión ya usa la función corregida, conservarla; I1 ya terminó y no requiere repetir cargas.
 
 ## Regla para próximos incrementos: Pull de Python → reinicio → 00_config
 
@@ -86,8 +88,8 @@ Tipos previstos por las expresiones del código, por confirmar con printSchema:
 
 El DDL deriva orden, nombres, tipos y nulabilidad del DataFrame, no de CSV inferido.
 Se utilizan tipos escalares Spark/Delta habituales; no hay tipos complejos ni
-aritmética de enteros de 32 bits para IDs. La confirmación de Bronze no certifica
-todavía el DDL y escritura de cada esquema restante.
+aritmética de enteros de 32 bits para IDs. El equipo confirmó la ejecución de las
+capas restantes; los esquemas exactos y sus metadatos deben conservarse con las salidas originales.
 
 ## Antes de ejecutar 04_silver
 
@@ -117,7 +119,7 @@ gold_by_streamer(silver_preview).printSchema()
    métricas antes de publicar y compara los conteos persistidos. Guardar las salidas:
    `bronze_rows` debe ser 3.051.733 si la tabla no cambió;
    Bronze = válidas + rechazadas; válidas = Silver + duplicadas. No anticipar los
-   conteos Silver/rechazos/duplicados: aún no están reportados.
+   conteos de otra ejecución. En I1 el equipo reportó 3.051.733 Silver, 0 rechazos y 0 duplicados.
 5. Revisar motivos de cuarentena y clave Silver única. Incluso una cuarentena vacía
    es una tabla creada: su existencia bloquea el reintento. Si se crea cuarentena
    pero falla Silver, detener y conservar ambos estados; no borrar ni reanexar.
@@ -137,5 +139,5 @@ gold_by_streamer(silver_preview).printSchema()
    demostración salvo necesidad explícita. 06 permanece como vista previa por defecto.
 
 No se identificó un defecto bloqueante adicional en esta revisión estática.
-Esto no sustituye ejecutar 04/05 en el runtime real; ante un nuevo error detener
-la secuencia y registrar evidencia antes de proponer cambios al pipeline.
+El equipo ya confirmó 04/05 en el runtime real. Para futuros incrementos, ante
+un nuevo error detener la secuencia y registrar evidencia antes de cambiar el pipeline.

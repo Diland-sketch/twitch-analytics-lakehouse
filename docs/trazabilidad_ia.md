@@ -48,3 +48,15 @@ Pull y lo resolvió reiniciando Python y ejecutando 00_config. Esta actualizaci�
 solo modifica documentación; no altera módulos, notebooks, pruebas, datos ni tablas.
 Se revisaron estáticamente los escritores y tipos previstos de las demás capas.
 Sus ejecuciones reales siguen pendientes; no se presenta la revisión como prueba de runtime.
+
+## Cierre reportado de I1 batch
+
+El usuario confirmó Silver con 3.051.733 válidos, 0 rechazos/duplicados; Gold con
+162.625 streamers, 3.051.733 interacciones y 95.887.110 minutos estimados. Reportó
+reconstrucción independiente de 3.051.733 filas, exceptAll 0 en ambos sentidos y
+equivalencia=True, sin modificar Silver original. La candidata conservó el nombre
+`silver_interactions_candidate_suffix` por literal accidental en el notebook del servicio.
+Se verificó que el notebook versionado pasa la variable `candidate_suffix=suffix`.
+Esta actualización es solo documental y prepara el resumen de presentación; no
+modifica código ni tablas. No se atribuye al asistente la ejecución en Databricks.
+Las secciones anteriores conservan el estado histórico de cada etapa de trabajo.

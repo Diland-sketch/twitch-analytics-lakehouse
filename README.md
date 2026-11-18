@@ -17,9 +17,17 @@ Presupuesto: **cero pesos**. Plataforma: **Databricks Free Edition**.
   conciliación de conteos del 100%. Tabla `workspace.twitch_lakehouse.bronze_interactions`,
   Delta, 2 archivos físicos, 43.938.329 bytes reportados por `DESCRIBE DETAIL`.
   Son resultados reportados por el equipo, no una ejecución del asistente.
-- Silver, cuarentena, Gold y candidatas siguen pendientes de ejecución real confirmada.
-  Ver [prevención y pasos seguros](docs/operacion_silver_gold.md): después de un Pull
-  que cambie módulos Python, reiniciar Python y ejecutar nuevamente `00_config`.
+- **I1 batch completado y verificado en Databricks por el equipo:** Silver con
+  3.051.733 registros válidos, 0 rechazados y 0 duplicados según las reglas implementadas;
+  Gold con 162.625 streamers, 3.051.733 interacciones y 95.887.110 minutos estimados.
+- Reconstrucción desde Bronze: Silver original y candidata con 3.051.733 filas cada una;
+  `exceptAll` en ambas direcciones dio 0 diferencias (`equivalencia=True`). La original
+  no se modificó. La candidata existente se llama `silver_interactions_candidate_suffix`
+  por un literal accidental en Databricks, documentado sin renombrar ni borrar tablas.
+- [Resumen técnico para presentación](docs/resumen_tecnico_i1.md) y
+  [reconstrucción y widget](docs/reconstruccion_silver.md).
+  Después de un Pull que cambie módulos Python, reiniciar Python y ejecutar de nuevo
+  `00_config`; ver [guía operativa](docs/operacion_silver_gold.md).
 - Validaciones realizadas y pendientes: [docs/validacion.md](docs/validacion.md).
 - Kafka es obligatorio para el proyecto completo; su integración queda pendiente
   a cargo de Anghela. **I1 no demuestra streaming ni Kafka**.

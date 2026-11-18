@@ -43,13 +43,14 @@ La [referencia de CREATE TABLE](https://docs.databricks.com/aws/en/sql/language-
 documenta DDL Delta y que `IF NOT EXISTS` ignora destinos existentes; por eso se omite.
 **Actualización de evidencia:** el equipo confirmó DDL + append en Bronze con el
 commit `5994433`, después de reiniciar Python y ejecutar de nuevo 00_config.
-Silver, cuarentena, Gold y candidatas siguen pendientes de confirmación real.
+Posteriormente el equipo confirmó Silver, cero rechazos/duplicados, Gold y
+la reconstrucción equivalente: el recorrido I1 batch está completado.
 Ver [evidencia](validacion.md) y [lecciones operativas](operacion_silver_gold.md).
 
 ## Actualizar la carpeta Git en Databricks
 
 El procedimiento de reintento de 03 que sigue documenta la recuperación original.
-**Bronze ya fue cargada exitosamente: para continuar I1 no reejecutar 03.**
+**I1 ya fue ejecutado exitosamente: no repetir 03–05 ni la candidata para actualizar documentación.**
 Aplicar desde ahora la [guía Silver/Gold](operacion_silver_gold.md).
 
 1. Detener cualquier ejecución en curso y anotar el valor local de `project_root`

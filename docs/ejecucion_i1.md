@@ -2,7 +2,9 @@
 
 Responsable de ejecución: Diland; Anghela revisa calidad y evidencia. No se requiere
 tarjeta, upgrade, trial, Kafka alojado ni clúster nuevo. Mantener Free Edition.
-Este procedimiento **no ha sido ejecutado por esta entrega**.
+El equipo confirmó el recorrido I1 completo en Databricks; ver [validación](validacion.md).
+Esta guía se conserva para reproducir en destinos nuevos, no para repetir escrituras
+sobre las tablas existentes. El asistente no ejecutó los notebooks en el servicio.
 
 ## 1. Abrir el proyecto completo
 
@@ -105,3 +107,10 @@ Para actualizar la carpeta Git y repetir la prueba tras la incidencia, seguir
 
 Free Edition aplica cuotas. Si se agotan, registrar el bloqueo y retomar al restablecerse;
 no contratar servicios para resolverlo. Kafka no forma parte de esta secuencia.
+
+## Evidencia de reconstrucción ya realizada
+
+La candidata existente `silver_interactions_candidate_suffix` es equivalente a la
+Silver original por exceptAll bidireccional, según reporte del equipo. El notebook
+versionado ya utiliza `candidate_suffix=suffix`; no necesita corrección. Ver
+[parametrización del widget y registro del incidente](reconstruccion_silver.md).
