@@ -16,15 +16,16 @@ Este procedimiento **no ha sido ejecutado por esta entrega**.
 3. Copiar la ruta absoluta de la raíz del proyecto mediante la UI de Workspace.
    Tiene forma `/Workspace/Users/<usuario>/twitch-analytics-lakehouse`; usar la ruta
    real, que puede diferir. No agregar `/notebooks` al final.
-4. Abrir `notebooks/00_config`, conectar al cómputo **Serverless** y ejecutar.
-   La primera vez crea el widget `project_root` y se detiene si está vacío. Completar
-   ese widget con la ruta anterior y volver a ejecutar. No se crean tablas aquí.
+4. Abrir `notebooks/00_config`, asignar la ruta anterior a la variable `project_root`
+   en su primera celda, conectar al cómputo **Serverless** y ejecutar. La ruta vacía
+   detiene la ejecución con un mensaje explícito. No se crean tablas aquí.
 5. Revisar la salida: namespace `workspace.twitch_lakehouse` y ruta
    `/Volumes/workspace/twitch_lakehouse/raw_data/100k_a.csv`.
 
-Todos los demás notebooks llaman `%run ./00_config`. En cada uno, completar su
-widget `project_root` con la misma ruta si aparece vacío y volver a ejecutar.
-La configuración de catálogo/esquema/volumen se selecciona solo en `00_config`.
+Todos los demás notebooks llaman `%run ./00_config` y reutilizan esa ruta.
+No se usa un widget para ella, porque `%run` ejecuta los widgets del notebook
+llamado con sus valores por defecto. La configuración de catálogo/esquema/volumen
+se selecciona solo en `00_config`.
 Si se cambia código importado, reiniciar la sesión Python y repetir configuración
 para evitar módulos antiguos en memoria.
 

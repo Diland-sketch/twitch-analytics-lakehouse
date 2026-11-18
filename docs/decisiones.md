@@ -21,6 +21,9 @@ Referencias consultadas el 17/11/2026:
   Spark Connect, ANSI y rutas absolutas; registrar versión del workspace al ejecutar.
 - [Volúmenes](https://docs.databricks.com/aws/en/volumes/volume-files): carga en Catalog
   Explorer; el subconjunto publicado cabe en el límite UI de 5 GB.
+- [Widgets con %run](https://docs.databricks.com/aws/en/notebooks/widgets): la ruta
+  absoluta se edita una sola vez en `00_config`, sin depender de valores interactivos
+  de widgets de un notebook llamado. El widget de candidata pertenece al propio notebook 06.
 
 Pendientes: comprobar parser real, semántica del fin del intervalo, permisos de
 catálogo/volumen y conectividad Kafka sin costo. No se garantiza el histórico completo
