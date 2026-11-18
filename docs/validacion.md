@@ -1,34 +1,50 @@
-# Validación de I1
+# Validación de I1 y corrección de escritura
 
-## Estado de ejecución
+## Evidencia reportada por el equipo en Databricks
 
-El equipo reporta un smoke test Spark artificial exitoso previo; no corresponde a
-esta suite ni al dataset Twitch. Esta entrega no ha ejecutado notebooks en Databricks.
+- Spark y `00_config` funcionan; `01_artificial_checks` pasó con estado PASS.
+- `100k_a.csv` está cargado en `/Volumes/workspace/twitch_lakehouse/raw_data/100k_a.csv`.
+- `02_bootstrap` prepara esquema y volumen.
+- `03_bronze` falló en la escritura compartida con
+  `[UNSUPPORTED_OPERATION] errorifexists is not supported`.
+- La tabla Bronze no existía antes del intento. Comprobar su estado actual antes
+  de reintentar; no inferir que un error garantiza ausencia posterior.
 
-Entorno local observado: Python 3.13.4, Java 22.0.2, sin PySpark ni pytest instalados.
-La suite usa unittest de la biblioteca estándar. No se instala un motor Spark nuevo
-ni se modifica el runtime Databricks desde este repositorio.
+Son resultados reportados por el usuario, no ejecuciones realizadas por el asistente.
+La corrección DDL + append **no se ha ejecutado todavía en Databricks**. No hay
+conteos reales de ingesta ni éxito de Bronze/Silver/Gold confirmados.
 
-## Comprobaciones locales
+## Comprobaciones locales de esta corrección
 
-- `python -m unittest discover -s tests -v`: 7 pruebas aprobadas y 1 omitida
-  explícitamente porque no está instalado PySpark. Se verificaron configuración,
-  rechazo de rutas/identificadores inválidos, exclusión del histórico y protecciones
-  de publicación con dobles de prueba (no procesamiento Spark).
-- `python -m compileall -q twitch_lakehouse tests notebooks`: compilación sin errores
-  de sintaxis; esto no valida la resolución de expresiones Spark ni el runtime Databricks.
+Python 3.13.4, sin PySpark instalado. No se instalaron dependencias ni se descargaron datos.
+
+- `python -m unittest discover -s tests -v`: **15 pruebas aprobadas, 1 omitida**
+  explícitamente por falta de PySpark. La suite original tenía 7 aprobadas y 1 omitida.
+- Regresión con dobles: destino existente intacto; creación antes de append; nombres,
+  orden, tipos y nulabilidad en DDL; reejecución sin duplicados en los seis destinos;
+  fallo de CREATE o de su confirmación sin append; carrera con catálogo desactualizado; fallo de append
+  conservando tabla y bloqueando reintentos; destino vacío también bloqueado;
+  identificadores inválidos y esquema sin columnas rechazados.
+- `python -m compileall -q twitch_lakehouse tests notebooks`: sin errores de sintaxis.
 - `git diff --check`: sin errores de espacios en el diff.
-- No se instalaron dependencias nuevas ni se descargó el dataset.
 
-## Verificaciones que requieren Databricks
+Los dobles comprueban decisiones y orden de llamadas: **no ejecutan SQL, Spark ni
+Delta**, ni prueban la compatibilidad real con el servicio Databricks.
 
-- Ejecutar `01_artificial_checks`: fixture artificial, casos de calidad, deduplicación,
-  conciliación Gold y reproducibilidad de transformación; sin tablas persistidas.
-- Confirmar permisos y bootstrap de esquema/volumen con `02_bootstrap`.
-- Cargar y verificar el CSV real; ejecutar 03–05 y conservar sus métricas.
-- Verificar bloqueo ante destino existente sin cambios en la tabla previa.
-- Ejecutar vista previa de 06 y, opcionalmente, crear candidata con sufijo nuevo;
-  comprobar que Silver original permanece y Gold sigue apuntando a ella.
+## Verificaciones pendientes en Databricks
 
-No se dispone todavía de resultados de estas verificaciones. Spark/Delta, permisos,
-widgets/importaciones y cuotas del workspace requieren comprobación real.
+1. Actualizar rama y reiniciar Python como indica
+   [corrección Spark Connect](correccion_spark_connect.md).
+2. Repetir 01 tras actualizar para confirmar que las transformaciones siguen pasando.
+3. Opcional: ejecutar `tests.databricks_storage_checks.run_storage_checks(spark, cfg)`
+   desde una celda tras 00_config. Crea dos tablas pequeñas ARTIFICIALES con nombres
+   únicos; verifica contenido, tipos y bloqueo de repetición; **no las elimina**.
+   Pendiente de ejecutar; no se confunde con 01, que sigue sin persistencia.
+4. Comprobar si Bronze existe ahora. Si no existe, ejecutar 03 y conciliar conteos.
+   Si existe, inspeccionarla y detener el reintento; no borrarla automáticamente.
+5. Ejecutar 04 y 05 solo tras éxito de la capa anterior; revisar rechazos y conciliaciones.
+6. Comprobar bloqueo al repetir y que no cambian filas ni versión Delta.
+7. Vista previa de 06 y candidata con sufijo nuevo si se desea comprobar persistencia.
+
+Guardar commit, versión Spark, salidas, esquemas, conteos y errores. Cuotas, permisos,
+DDL, append y comportamiento del runtime requieren esta comprobación real.

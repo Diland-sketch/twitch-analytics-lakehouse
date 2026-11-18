@@ -32,8 +32,10 @@ por la tupla completa; Gold resume Silver. Procedencia en Bronze y cuarentena, s
 elegir una procedencia arbitraria al deduplicar Silver.
 Mantener el volumen sin cambios durante la ejecución; no hay ingesta concurrente.
 
-Las escrituras son individuales, sin transacción multicapa. Si falla una después de
-crear otra, detener y revisar: no hay borrado ni reparación automática. Para repetir
+Las escrituras son individuales, sin transacción multicapa. Cada destino se crea
+con DDL estricto y luego se carga con append; no hay transacción entre esos dos pasos.
+Si falla el append, queda una tabla creada que bloquea el reintento aunque esté vacía.
+Si falla una escritura después de otra, detener y revisar: no hay borrado ni reparación automática. Para repetir
 de extremo a extremo usar otro esquema aislado y volver a cargar la fuente.
 Reejecutar al mismo destino se bloquea; no es un upsert incremental.
 Kafka queda fuera del flujo batch I1 implementado.

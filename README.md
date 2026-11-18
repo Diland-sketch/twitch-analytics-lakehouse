@@ -9,8 +9,12 @@ Presupuesto: **cero pesos**. Plataforma: **Databricks Free Edition**.
 - El equipo reportó la ejecución exitosa de `00_spark_smoke_test` en Databricks con
   `groupBy`, `count` y `sum` sobre un DataFrame **artificial**. Ese notebook no estaba
   en el repositorio inspeccionado; no se presenta como evidencia nueva de esta entrega.
-- I1 prepara código batch y documentación; **no se ha cargado Twitch ni ejecutado
-  este pipeline en Databricks**. No hay conteos reales ni tablas creadas por esta entrega.
+- En la primera ejecución de I1, el equipo confirmó `100k_a.csv` cargado en el
+  volumen, `00_config` operativo, `01_artificial_checks` en **PASS** y bootstrap
+  preparado. `03_bronze` falló con `[UNSUPPORTED_OPERATION] errorifexists is not supported`.
+- Esta corrección sustituye ese modo de escritura por creación DDL protegida y append.
+  **La corrección aún no ha sido ejecutada en Databricks**. No hay conteos reales
+  de ingesta ni Bronze/Silver/Gold exitosas confirmadas.
 - Validaciones realizadas y pendientes: [docs/validacion.md](docs/validacion.md).
 - Kafka es obligatorio para el proyecto completo; su integración queda pendiente
   a cargo de Anghela. **I1 no demuestra streaming ni Kafka**.
@@ -62,6 +66,8 @@ probar, crear objetos ausentes, cargar el CSV y ejecutar las capas.
 Pruebas locales: `python -m unittest discover -s tests -v`.
 La prueba Spark se omite explícitamente si PySpark no está instalado; el notebook 01
 ejecuta las mismas comprobaciones en el Spark administrado de Databricks.
+Para actualizar la Git folder y verificar esta incidencia, seguir
+[corrección Spark Connect](docs/correccion_spark_connect.md).
 
 Rama: `feat/i1-spark-medallion`. Revisar antes de integrar; sin merge automático.
 Ver [decisiones](docs/decisiones.md), [rúbrica provisional](docs/rubrica.md) y

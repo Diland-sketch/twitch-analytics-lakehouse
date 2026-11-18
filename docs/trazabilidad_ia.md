@@ -29,3 +29,13 @@ SHA-256 y tamaño de `100k_a.csv`, salidas de 01 y 03–05, motivos de rechazo,
 capturas de esquemas/tablas y conclusión de revisión de Anghela. No incluir tokens
 ni CSV en evidencia versionada. Si una ejecución falla, registrar el error y dejar
 su estado como pendiente en lugar de sustituirlo por resultados artificiales.
+
+## Seguimiento: corrección por incidencia de escritura
+
+El usuario aportó evidencia de 01 PASS, archivo real cargado y fallo de 03 con
+`errorifexists` no soportado. Es evidencia reportada por el equipo, sin ejecución
+del asistente en Databricks. Se revisaron todos los escritores, se sustituyó el
+modo incompatible por DDL estricto + append y se agregaron regresiones locales
+con dobles e integración optativa explícitamente artificial. No hubo cambios de
+contrato, transformaciones ni reglas analíticas. La validación real de la
+corrección queda pendiente; ver validacion.md y correccion_spark_connect.md.

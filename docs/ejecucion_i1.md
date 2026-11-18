@@ -76,9 +76,15 @@ La aceptación requiere revisar rechazos: no basta con que el notebook termine.
 
 ## 5. Reejecución y reconstrucción segura
 
-Las escrituras usan `errorifexists`; volver a ejecutar una etapa completada da un
-error de destino existente. Es deliberado: no hay append duplicado, overwrite, DROP,
-DELETE, TRUNCATE ni sustitución de Silver.
+Las escrituras validan ausencia, crean con `CREATE TABLE ... USING DELTA` sin
+`IF NOT EXISTS` y hacen `append` solo si la creación termina correctamente. El
+workspace rechazó el antiguo `errorifexists`; ya no se usa ese modo.
+Volver a ejecutar una etapa con destino existente se bloquea antes de anexar datos,
+incluso si la tabla está vacía. No hay overwrite, DROP, DELETE, TRUNCATE ni sustitución.
+Si falla el append después del DDL, la tabla creada se conserva y la reejecución se
+bloquea: revisar el fallo, no reanudar anexando automáticamente.
+Para actualizar la carpeta Git y repetir la prueba tras la incidencia, seguir
+[este procedimiento](correccion_spark_connect.md).
 
 - Si se desea revisar Silver desde Bronze, ejecutar `06_rebuild_silver_candidate`.
   Por defecto solo calcula métricas y muestra filas, **sin escritura**.

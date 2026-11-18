@@ -13,7 +13,7 @@ def ingest_bronze(spark, cfg):
     count = df.count()
     if count == 0:
         raise ValueError("Fuente vacía: no se crea Bronze")
-    write_new(df, target)
+    write_new(spark, df, target)
     actual = spark.table(target).count()
     if actual != count:
         raise RuntimeError("Conteo Bronze distinto de la fuente; detener y revisar")
@@ -44,8 +44,8 @@ def build_silver(spark, cfg, candidate_suffix=None):
     bronze = spark.table(cfg.table("bronze_interactions"))
     silver, rejects, valid = silver_frames(bronze)
     metrics = silver_metrics(bronze, silver, rejects, valid)
-    write_new(rejects, quarantine)
-    write_new(silver, target)
+    write_new(spark, rejects, quarantine)
+    write_new(spark, silver, target)
     if (spark.table(target).count() != metrics["silver_rows"] or
             spark.table(quarantine).count() != metrics["rejected_rows"]):
         raise RuntimeError("Conteos persistidos inconsistentes; detener y revisar")
@@ -63,6 +63,6 @@ def build_gold(spark, cfg):
                       F.sum("estimated_minutes").alias("minutes")).first()
     if expected["rows"] == 0 or tuple(expected) != tuple(actual):
         raise ValueError("Gold no concilia interacciones/minutos con Silver")
-    write_new(gold, target)
+    write_new(spark, gold, target)
     return {"gold_rows": spark.table(target).count(),
             "interactions": actual["rows"], "estimated_minutes": actual["minutes"]}
