@@ -1,0 +1,24 @@
+name: twitch-audience-i5
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: audience_experience/api/Dockerfile
+    environment:
+      I4_SQLITE_PATH: /state/monitor.sqlite
+      PYTHONDONTWRITEBYTECODE: '1'
+    volumes:
+      - i4_results:/state:ro
+    read_only: true
+    tmpfs: [/tmp]
+    init: true
+  web:
+    build:
+      context: ./web
+    ports: ['127.0.0.1:5173:80']
+    depends_on: [api]
+    init: true
+volumes:
+  i4_results:
+    external: true
+    name: ${I4_STATE_VOLUME:-twitch-live-i4_monitor_state}
