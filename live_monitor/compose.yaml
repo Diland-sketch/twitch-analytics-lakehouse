@@ -1,0 +1,80 @@
+name: twitch-live-i4
+x-app: &app
+  image: twitch-live-i4:local
+  build:
+    context: ..
+    dockerfile: live_monitor/Dockerfile
+  environment:
+    STATE_DIR: /state
+    KAFKA_BOOTSTRAP: kafka:9092
+    KAFKA_TOPIC: twitch.i4.historical
+  volumes:
+    - monitor_state:/state
+  init: true
+services:
+  kafka-init:
+    image: apache/kafka:3.9.1
+    user: '0:0'
+    entrypoint: [/bin/sh, -c]
+    command: ['mkdir -p /tmp/kraft-combined-logs && chown -R 1000:1000 /tmp/kraft-combined-logs']
+    volumes:
+      - kafka_i4:/tmp/kraft-combined-logs
+  kafka:
+    image: apache/kafka:3.9.1
+    depends_on:
+      kafka-init: {condition: service_completed_successfully}
+    environment:
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    volumes:
+      - kafka_i4:/tmp/kraft-combined-logs
+    healthcheck:
+      test: [CMD-SHELL, '/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server kafka:9092 > /dev/null 2>&1']
+      interval: 5s
+      timeout: 5s
+      retries: 24
+  topic:
+    image: apache/kafka:3.9.1
+    depends_on:
+      kafka: {condition: service_healthy}
+    entrypoint: [/opt/kafka/bin/kafka-topics.sh]
+    command: [--bootstrap-server, 'kafka:9092', --create, --if-not-exists, --topic, twitch.i4.historical, --partitions, '1', --replication-factor, '1']
+  spark:
+    <<: *app
+    depends_on:
+      topic: {condition: service_completed_successfully}
+    command: [/opt/spark/bin/spark-submit, --master, 'local[2]', --packages, 'org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.8', /app/live_monitor/consumer.py]
+    stop_grace_period: 60s
+  dashboard:
+    <<: *app
+    command: [python3, -m, streamlit, run, /app/live_monitor/dashboard.py, --server.address=0.0.0.0, --server.port=8501, --server.headless=true, --browser.gatherUsageStats=false]
+    ports: ['127.0.0.1:8501:8501']
+  producer:
+    <<: *app
+    profiles: [tools]
+    volumes:
+      - monitor_state:/state
+      - type: bind
+        source: ${TWITCH_CSV:?Define TWITCH_CSV con la ruta absoluta de 100k_a.csv}
+        target: /input/100k_a.csv
+        read_only: true
+        bind: {create_host_path: false}
+    command: [python3, -m, live_monitor.producer, --csv, /input/100k_a.csv, --count, '100', --rate, '5']
+  tools:
+    <<: *app
+    profiles: [tools]
+    command: [python3, -m, live_monitor.control, status]
+volumes:
+  kafka_i4:
+  monitor_state:

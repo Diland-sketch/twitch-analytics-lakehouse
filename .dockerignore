@@ -1,0 +1,7 @@
+**/.git
+**/.venv
+**/work
+**/outputs
+**/__pycache__
+**/*.csv
+**/*.log
