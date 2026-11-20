@@ -1,5 +1,23 @@
 # Twitch Analytics Lakehouse
 
+## I3: analítica y dashboard (pendiente de validación en Databricks)
+
+Incremento aditivo: no modifica tablas I1 ni Kafka. Rama I3 y PR basados en
+`feat/i1-spark-medallion`; `main` todavía no contiene el pipeline.
+
+- [Auditoría, riesgos y secuencia segura](docs/i3_plan_seguro.md).
+- [Requerimientos y definiciones R01–R08](docs/i3_requerimientos.md).
+- [Modelo Gold ampliado](docs/i3_modelo_gold.md).
+- [Diseño de dos páginas](docs/i3_dashboard.md).
+- [Guía reproducible y verificación](docs/i3_ejecucion.md).
+- [Trazabilidad](docs/i3_trazabilidad.md) y [evidencia de pruebas](docs/i3_validacion.md).
+- Transformaciones `twitch_lakehouse/analytics*.py`, notebooks 07/08 y
+  consultas independientes en `sql/i3/`.
+
+La recurrencia es proporción de usuarios con >=2 interacciones con un streamer,
+sin afirmar retención. El tiempo es relativo y las conexiones observadas al chat
+no prueban espectadores activos. Dashboard propuesto, aún sin validación del UI.
+
 Proyecto universitario para analizar interacciones y patrones de audiencia mediante
 Apache Spark y arquitectura Medallón. Presentación: **18 de noviembre de 2026**.
 Presupuesto: **cero pesos**. Plataforma: **Databricks Free Edition**.
