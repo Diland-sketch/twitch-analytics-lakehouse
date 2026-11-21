@@ -1,0 +1,86 @@
+name: Validacion integrada - desarollo
+
+on:
+  push:
+    branches: [desarollo]
+  pull_request:
+    branches: [desarollo]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lakehouse-i1-i3:
+    name: Lakehouse I1/I3 (Spark local)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SPARK_LOCAL_IP: 127.0.0.1
+      PYSPARK_PYTHON: python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: audience_experience/api/requirements.txt
+      - name: Instalar PySpark
+        run: python -m pip install --disable-pip-version-check pyspark==4.0.1
+      - name: Revisar sintaxis
+        run: python -m compileall -q twitch_lakehouse tests notebooks
+      - name: Ejecutar pruebas I1 e I3 (Spark real, fixtures artificiales)
+        run: python -m unittest discover -s tests -v
+
+  live-monitor-i4:
+    name: I4 (contratos locales, sin Kafka externo)
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Ejecutar pruebas sin Spark (Spark I4 se prueba aparte en Docker)
+        run: python -m unittest discover -s live_monitor/tests -v
+
+  api-i5:
+    name: API I5 (fixtures SQLite)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: audience_experience/api/requirements.txt
+      - name: Instalar dependencias API
+        run: python -m pip install --disable-pip-version-check -r audience_experience/api/requirements.txt
+      - name: Pruebas API
+        run: python -m pytest audience_experience/tests -q
+
+  frontend-i5:
+    name: React I5 (unitarias y compilacion)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: audience_experience/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: audience_experience/web/package-lock.json
+      - name: Instalar dependencias exactas
+        run: npm ci
+      - name: Pruebas unitarias
+        run: npm test
+      - name: Compilar aplicacion
+        run: npm run build
