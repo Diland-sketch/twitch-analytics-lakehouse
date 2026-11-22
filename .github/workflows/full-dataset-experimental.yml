@@ -1,0 +1,26 @@
+name: Full dataset - preparación experimental
+
+on:
+  push:
+    branches: [experimental/full-dataset-124m]
+  pull_request:
+    branches: [experimental/full-dataset-124m]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-fragments:
+    name: Preparador GZIP - fixtures y sintaxis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Sintaxis
+        run: python -m compileall -q twitch_lakehouse/full_dataset_prepare.py tests/test_full_dataset_prepare.py
+      - name: Pruebas deterministas con GZIP artificial
+        run: python -m unittest tests.test_full_dataset_prepare -v
