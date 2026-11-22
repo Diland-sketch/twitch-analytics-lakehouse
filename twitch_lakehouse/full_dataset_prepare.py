@@ -91,7 +91,7 @@ def main():
     result = prepare(args.source, args.output, args.rows, args.rows_per_part)
     print(json.dumps(dict(status="PASS", extracted_rows=result["extracted_rows"],
                           parts=len(result["parts"]), source_sha256=result["source_sha256"],
-                          manifest=str((args.output / "manifest.json").resolve())))
+                          manifest=str((args.output / "manifest.json").resolve()))))
 
 
 if __name__ == "__main__":
