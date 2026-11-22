@@ -127,3 +127,42 @@ estados de conexión y respaldo Streamlit. Los componentes UI provienen del
 registro oficial shadcn/ui; ECharts usa módulos de línea/barra y renderer canvas.
 Límite: el lector I4 original materializa actividad; I5 renderiza últimos 300
 puntos y Top 20. No se afirma escalabilidad a 124 millones.
+
+
+## Navegación unificada de dos áreas (rama `desarollo`)
+
+El menú principal presenta solo **Análisis de audiencia** y **Laboratorio de datos**.
+La primera área consume el JSON Gold I3 exportado desde Databricks (ver
+`docs/integracion_gold_react.md`) y explica conexiones, recurrencia, minutos,
+ranking y distribución. No necesita Kafka disponible y no muestra estado de
+WebSocket, selector `run_id` ni indicadores de Spark.
+
+El laboratorio incluye pestañas **Resumen**, **Audiencia del replay**,
+**Procesamiento** y **Guía de demostración**, además del acceso a Streamlit.
+Reutiliza exactamente los snapshots I4, conserva filtros por `run_id`,
+WebSocket/polling y estados de recuperación. Al cambiar al histórico se cierra
+el WebSocket del laboratorio; al regresar se conecta de nuevo.
+
+Un enlace con `?run_id=UUID` abre directamente el laboratorio para conservar
+las demostraciones compartidas. Sin `run_id`, la pantalla inicial es el
+análisis de audiencia. Ningún resultado batch se suma al replay local.
+
+### Actualizar en Windows
+
+Desde la raíz del repositorio:
+
+```powershell
+git checkout desarollo
+git pull origin desarollo
+docker compose -f audience_experience/compose.yaml up -d --build
+```
+
+La API histórica necesita que siga existiendo
+`audience_experience/data/historical_snapshot.json` en el computador.
+La ruta se monta de solo lectura en Docker. No es necesario recrear Kafka ni
+volver a exportar I3 cuando el JSON sigue vigente.
+
+**Evidencia previa proporcionada por el usuario:** prueba local de 1000
+eventos válidos, ninguno inválido, 1000 únicos conservados tras un reinicio
+controlado de Spark. No es una prueba de pérdida de Kafka ni de alto volumen;
+no se ejecutó desde CI.
