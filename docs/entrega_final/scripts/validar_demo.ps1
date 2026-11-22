@@ -59,6 +59,12 @@ function Wait-Count([int]$target,[string]$stage){
   }
   throw "${stage}: se agotó el tiempo esperando $target eventos únicos. $lastError"
 }
+function Get-HeartbeatInstant($value) {
+  # PS7 convierte fechas JSON a DateTime; PS5 suele conservar ISO como string.
+  if($value -is [datetimeoffset]){return $value}
+  if($value -is [datetime]){return [datetimeoffset]$value}
+  return [datetimeoffset]::Parse([string]$value,[Globalization.CultureInfo]::InvariantCulture)
+}
 function Wait-ConsumerReady([datetimeoffset]$since) {
   $until=(Get-Date).AddSeconds($TimeoutSeconds)
   while((Get-Date) -lt $until){
@@ -68,7 +74,7 @@ function Wait-ConsumerReady([datetimeoffset]$since) {
     }
     if($snap.consumer -and $snap.consumer.state -eq 'RUNNING' -and
        -not $snap.consumer.stale -and
-       [datetimeoffset]::Parse($snap.consumer.heartbeat) -gt $since){return $snap}
+       (Get-HeartbeatInstant $snap.consumer.heartbeat) -gt $since){return $snap}
     Start-Sleep -Seconds 2
   }
   throw 'Spark no confirmó RUNNING con heartbeat nuevo dentro del plazo'
