@@ -12,7 +12,9 @@ def valid():
             "metrics": {"bronze_rows": 4, "silver_rows": 3, "rejected_rows": 1,
                         "gold_streamers": 2, "estimated_minutes": 30,
                         "top10_share": 1.0, "top100_share": 1.0},
-            "ranking": [{"streamer_username": "fixture", "interactions": 2}],
+            "ranking": [{"streamer_username": "fixture", "interactions": 2,
+                         "unique_users": 2, "recurring_users": 1,
+                         "recurrence_rate": 0.5, "estimated_minutes": 20}],
             "duration": [{"duration_bucket": i, "interactions": 3 if i == 0 else 0}
                          for i in range(5)]}
 
@@ -29,6 +31,11 @@ def test_valid_export(tmp_path):
     lambda d: d["metrics"].update(silver_rows=10),
     lambda d: d["duration"][0].update(interactions=2),
     lambda d: d.update(duration=[]),
+    lambda d: d["ranking"][0].pop("unique_users"),
+    lambda d: d["ranking"][0].update(unique_users=True),
+    lambda d: d["ranking"][0].update(estimated_minutes=-1),
+    lambda d: d["ranking"][0].update(recurrence_rate=float("nan")),
+    lambda d: d["ranking"][0].update(recurrence_rate=0.75),
 ])
 def test_invalid_export_rejected(tmp_path, change):
     payload = valid()

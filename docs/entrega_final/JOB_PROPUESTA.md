@@ -48,6 +48,10 @@ No se reusan notebooks 03–08 como si fueran idempotentes.
 El notebook no escribe tablas, volúmenes ni archivos de datos; únicamente
 publica resultados en logs y taskValues del Job. Una ejecución manual interactiva
 no es equivalente a validar el DAG remoto y puede requerir contexto Jobs.
+Ejecutar con I1 y la release I3 conservados sin escritores concurrentes. Las
+tareas de conteos no reconstruyen Silver ni certifican contenido fila a fila;
+completar SQL 03/04 del dossier para esa evidencia. No confundir sumas con prueba
+universal de calidad ni la sintaxis local con compatibilidad remota verificada.
 
 Fuentes oficiales revisadas el 22/11/2026:
 [notebook tasks](https://docs.databricks.com/aws/en/jobs/tasks/notebook),

@@ -4,6 +4,9 @@
 
 ## Empezar aquí
 
+**Cierre del 22/11:** [diagnóstico priorizado, checklist y candidata](CIERRE_20261122.md).
+La [propuesta de Job](JOB_PROPUESTA.md) es solo lectura y no fue creada remotamente.
+
 | Documento | Para qué sirve | Verificación principal |
 | --- | --- | --- |
 | [01_requerimientos.md](01_requerimientos.md) | Alcance, contratos, RF/RNF, criterios y trazabilidad | Casos observables RF01–RF12 |

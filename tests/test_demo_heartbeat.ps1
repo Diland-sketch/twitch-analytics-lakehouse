@@ -16,3 +16,19 @@ foreach($value in @($iso,$offset,$localDate)){
   if($actual -ne $expected){throw "Instante alterado para tipo $($value.GetType())"}
 }
 Write-Output 'PASS: ISO, DateTimeOffset y DateTime conservan el mismo instante UTC'
+$wait=$tree.Find({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Wait-ConsumerReady'},$true)
+. ([scriptblock]::Create($wait.Extent.Text))
+$TimeoutSeconds=2;$base='http://fixture';$runId='ARTIFICIAL'
+$since=[datetimeoffset]::UtcNow
+$script:responses=[Collections.Generic.Queue[object]]::new()
+function Call-Api($url){return $script:responses.Dequeue()}
+function Start-Sleep([int]$Seconds){} # Solo test: no espera ni hace solicitudes.
+$script:responses.Enqueue([pscustomobject]@{consumer=[pscustomobject]@{state='FAILED';stale=$false;heartbeat=$since.AddSeconds(-1)}})
+$script:responses.Enqueue([pscustomobject]@{consumer=[pscustomobject]@{state='RUNNING';stale=$false;heartbeat=$since.AddSeconds(1)}})
+$ready=Wait-ConsumerReady $since
+if($ready.consumer.state -ne 'RUNNING' -or $script:responses.Count -ne 0){throw 'Se aceptó estado anterior al contenedor nuevo'}
+$script:responses.Enqueue([pscustomobject]@{consumer=[pscustomobject]@{state='FAILED';stale=$false;heartbeat=$since.AddSeconds(1)}})
+$failed=$false
+try { Wait-ConsumerReady $since | Out-Null } catch {if($_.Exception.Message -like 'Nuevo consumidor Spark*'){$failed=$true}else{throw}}
+if(-not $failed){throw 'Un FAILED nuevo no debe ignorarse'}
+Write-Output 'PASS: cierre FAILED anterior se distingue de fallo nuevo; RUNNING exige heartbeat nuevo'
