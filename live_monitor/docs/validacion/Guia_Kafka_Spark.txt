@@ -1,0 +1,262 @@
+GUÍA PASO A PASO — KAFKA + SPARK STREAMING
+Twitch Analytics Lakehouse — Anghela
+
+
+VERSIÓN PROBADA
+Carpeta: C:\Users\anghe\twitch-streaming-pruebas
+Rama: feat/i4-twitch-live-monitor
+Commit: 5afba7ee9af8d51a858fc7cf7610e70e39a89afb
+
+======================================================================
+PASO 1. ABRIR DOCKER Y UBICARSE EN EL PROYECTO
+======================================================================
+Abre Docker Desktop desde Inicio y espera a que el motor esté listo.
+Después abre PowerShell.
+
+PEGAR:
+Set-Location "$HOME\twitch-streaming-pruebas"
+
+Esperar al indicador de PowerShell. PEGAR:
+$env:TWITCH_CSV = "$HOME/Downloads/100k_a.csv"
+
+PEGAR:
+Test-Path $env:TWITCH_CSV
+
+RESULTADO: True. Si aparece False, detenerse y localizar el CSV.
+
+======================================================================
+PASO 2. COMPROBAR DOCKER, VERSIÓN Y CONFIGURACIÓN
+======================================================================
+PEGAR:
+docker version
+
+Esperar a que termine. Debe mostrar Client y Server.
+Si no responde el motor, revisar Docker Desktop antes de continuar.
+
+PEGAR:
+git rev-parse HEAD
+
+Debe coincidir con el commit indicado al comienzo de esta guía.
+Si es diferente, registrar la versión y revisar sus instrucciones antes de
+atribuirle los resultados de la versión anterior.
+
+PEGAR:
+docker compose -f live_monitor/compose.yaml config --quiet
+
+Es normal que no imprima nada. Cuando vuelva el indicador, PEGAR:
+
+$LASTEXITCODE
+
+RESULTADO: 0. Si es distinto, detenerse y revisar el error anterior.
+
+======================================================================
+PASO 3. IMAGEN Y ARRANQUE
+======================================================================
+EN TU COMPUTADOR: la imagen ya se construyó. Salta la construcción y ve a
+«Arrancar servicios». No necesitas volver a descargar todo en cada prueba.
+
+SOLO SI LA IMAGEN NO EXISTE, PEGAR:
+docker compose -f live_monitor/compose.yaml build spark
+
+Esperar hasta que termine completamente. Puede tardar varios minutos.
+Después comprobar $LASTEXITCODE: debe ser 0 antes de continuar.
+
+ARRANCAR SERVICIOS. PEGAR:
+docker compose -f live_monitor/compose.yaml up -d kafka spark dashboard
+
+Esperar a que vuelva el indicador y luego esperar otros 30 segundos.
+
+PEGAR:
+docker compose -f live_monitor/compose.yaml ps -a
+
+RESULTADO: kafka, spark y dashboard activos. Kafka normalmente healthy.
+kafka-init y topic pueden estar Exited (0): terminaron su inicialización.
+Exited con otro código en un servicio requiere diagnóstico.
+
+PEGAR:
+docker compose -f live_monitor/compose.yaml logs --tail 40 spark
+
+Este comando termina solo: no requiere Ctrl+C. Los avisos WARN, por sí
+solos, no prueban fallo ni éxito; revisar excepciones y estado del consumidor.
+
+======================================================================
+PASO 4. ABRIR EL DASHBOARD Y REGISTRAR EL ESTADO INICIAL
+======================================================================
+Abre en el navegador:
+http://localhost:8501
+
+Esperar «Consumidor Spark: RUNNING». Si aún está iniciando, esperar otros
+20 segundos y revisar otra vez. Si no arranca, consultar los logs.
+
+Puede haber resultados de pruebas anteriores. NO borrar datos para poner
+los indicadores en cero. Una ejecución nueva tendrá su propio run_id.
+La opción «Todas» incluye otras ejecuciones: no confundirla con el lote nuevo.
+
+======================================================================
+PASO 5. CREAR IDENTIFICADOR Y CARPETA DE EVIDENCIAS
+======================================================================
+Volver a LA MISMA ventana de PowerShell.
+
+PEGAR:
+$runId = [guid]::NewGuid().ToString()
+
+PEGAR:
+$runId
+
+Aparece un UUID real. No escribir literalmente RUN_ID ni UUID.
+NO volver a generar $runId durante el reinicio o el reenvío de esta prueba.
+
+PEGAR:
+$carpetaEvidencias = Join-Path "$HOME\twitch-streaming-pruebas\work\evidencias-a" $runId
+
+PEGAR:
+New-Item -ItemType Directory -Force $carpetaEvidencias | Out-Null
+
+PEGAR:
+$runId | Set-Content -Encoding UTF8 (Join-Path $carpetaEvidencias "run-id.txt")
+
+PEGAR:
+explorer.exe $carpetaEvidencias
+
+Se abre la carpeta de esta demostración. Guarda aquí las capturas.
+Si aún no publicaste, puedes conservar una captura del estado inicial,
+indicando si corresponde a «Todas» y contiene datos anteriores.
+
+======================================================================
+PASO 6. PUBLICAR 100 EVENTOS — EJECUTAR UNA SOLA VEZ
+======================================================================
+Deja el dashboard abierto. PEGAR TODA ESTA LÍNEA:
+docker compose -f live_monitor/compose.yaml run --rm --no-deps producer python3 -m live_monitor.producer --csv /input/100k_a.csv --run-id $runId --count 100 --rate 5 2>&1 | Tee-Object -FilePath (Join-Path $carpetaEvidencias "productor.txt")
+
+ESPERAR hasta que termine y vuelva el indicador. Primero calcula el SHA256
+del CSV y después publica; puede tardar más de 20 segundos.
+No pegar otros comandos ni repetir el envío mientras trabaja.
+
+Debe terminar con acknowledged: 100 y status: COMPLETED.
+INMEDIATAMENTE DESPUÉS, PEGAR:
+$LASTEXITCODE
+
+RESULTADO: 0. Si falla o faltan confirmaciones, detenerse y conservar la salida.
+No crear otro run_id para ocultar una ejecución parcial.
+
+======================================================================
+PASO 7. COMPROBAR SPARK Y GUARDAR LA CAPTURA
+======================================================================
+Esperar unos 20 segundos después de terminar el productor.
+En el dashboard, seleccionar el UUID de esta prueba.
+Para volver a verlo, ejecutar $runId en PowerShell.
+
+PEGAR TODA ESTA LÍNEA:
+docker compose -f live_monitor/compose.yaml run --rm --no-deps tools python3 -m live_monitor.control status --run-id $runId 2>&1 | Tee-Object -FilePath (Join-Path $carpetaEvidencias "estado-inicial.txt")
+
+Esperar al indicador. INMEDIATAMENTE DESPUÉS, PEGAR:
+$LASTEXITCODE
+
+RESULTADO: 0. Para el mismo CSV y primeras 100 filas ya probadas:
+  total = 100
+  valid = 100
+  invalid = 0
+  estimated_minutes_total = 2070
+  consumidor = RUNNING
+
+Si todavía hay menos de 100, esperar otros 20 segundos y repetir SOLO
+la consulta de estado. NO volver a publicar. Si persiste, revisar logs.
+
+Guardar captura: 01-dashboard-procesado.png.
+Debe verse el run_id seleccionado y los indicadores 100 / 100 / 0.
+Los offsets pueden empezar en una posición diferente de cero si había mensajes.
+
+======================================================================
+PASO 8. REINICIAR ÚNICAMENTE SPARK
+======================================================================
+PEGAR:
+docker compose -f live_monitor/compose.yaml restart spark
+
+Esperar a que termine y luego esperar otros 30 segundos.
+
+PEGAR:
+docker compose -f live_monitor/compose.yaml logs --tail 30 spark
+
+Esperar RUNNING en el dashboard. Después PEGAR:
+docker compose -f live_monitor/compose.yaml run --rm --no-deps tools python3 -m live_monitor.control status --run-id $runId 2>&1 | Tee-Object -FilePath (Join-Path $carpetaEvidencias "estado-reinicio.txt")
+
+Esperar al indicador y comprobar $LASTEXITCODE: debe ser 0.
+RESULTADO: siguen 100 eventos únicos, 100 válidos, 0 inválidos y 2070 minutos.
+No ejecutar el productor durante esta comprobación.
+Guardar captura: 02-dashboard-tras-reinicio.png.
+
+======================================================================
+PASO 9. REENVIAR EL MISMO LOTE UNA SOLA VEZ
+======================================================================
+Conservar el MISMO $runId, archivo y rango. PEGAR:
+docker compose -f live_monitor/compose.yaml run --rm --no-deps producer python3 -m live_monitor.producer --csv /input/100k_a.csv --run-id $runId --count 100 --rate 5 2>&1 | Tee-Object -FilePath (Join-Path $carpetaEvidencias "reenvio.txt")
+
+Esperar a COMPLETED y al indicador. Comprobar inmediatamente:
+$LASTEXITCODE
+
+Debe ser 0, con 100 confirmaciones del intento de reenvío.
+Esperar otros 20 segundos. Después PEGAR:
+docker compose -f live_monitor/compose.yaml run --rm --no-deps tools python3 -m live_monitor.control status --run-id $runId 2>&1 | Tee-Object -FilePath (Join-Path $carpetaEvidencias "estado-reenvio.txt")
+
+Esperar y comprobar $LASTEXITCODE: debe ser 0.
+RESULTADO: permanecen 100 únicos y 2070 minutos para ese run_id.
+El transporte global aumenta en 100 respecto al estado antes del reenvío.
+Solo será 200 si no existen otros mensajes o ejecuciones.
+Si aún no refleja todos los offsets, esperar y repetir SOLO la consulta.
+
+Guardar captura: 03-dashboard-tras-reenvio.png.
+Esto demuestra deduplicación del mismo lote identificado; no una garantía
+universal de exactamente una vez ni tolerancia a pérdida del disco.
+
+======================================================================
+PASO 10. GUARDAR VERSIÓN Y SERVICIOS
+======================================================================
+PEGAR:
+git rev-parse HEAD | Set-Content -Encoding UTF8 (Join-Path $carpetaEvidencias "commit.txt")
+
+PEGAR:
+docker compose -f live_monitor/compose.yaml ps -a 2>&1 | Tee-Object -FilePath (Join-Path $carpetaEvidencias "servicios.txt")
+
+PEGAR:
+Get-ChildItem $carpetaEvidencias | Select-Object Name, Length
+
+Revisar que existan los archivos y las capturas. Los TXT guardan salidas
+reales; no editar cifras para hacer pasar la prueba.
+
+======================================================================
+PASO 11. CIERRE — SOLO CUANDO TERMINES DE MOSTRAR EL DASHBOARD
+======================================================================
+PEGAR:
+docker compose -f live_monitor/compose.yaml stop spark dashboard kafka
+
+Esperar hasta que termine. Conserva los datos y checkpoints.
+Ahora puedes cerrar el navegador, PowerShell y Docker Desktop si no hay
+otros trabajos usándolo.
+
+NO ejecutar down -v, borrar volúmenes ni eliminar checkpoints.
+No modificar las tablas Bronze, Silver o Gold de Databricks.
+Para otra demostración, empezar desde el paso 1 y crear un run_id nuevo.
+
+======================================================================
+SI CIERRAS POWERSHELL POR ACCIDENTE
+======================================================================
+Las variables $env:TWITCH_CSV, $runId y $carpetaEvidencias se pierden al cerrar
+la ventana; los datos y archivos guardados no se eliminan.
+Antes de continuar, restaurar carpeta y ruta CSV como en el paso 1.
+Para recuperar una ejecución, usar el identificador guardado en su run-id.txt.
+No generar otro UUID si estás comprobando reinicio o reenvío del lote anterior.
+
+======================================================================
+ERRORES Y ESPERAS
+======================================================================
+- Si aparece >> en PowerShell, puede faltar cerrar comillas o paréntesis.
+  Si aún no se ejecutó el comando, Ctrl+C cancela la entrada incompleta;
+  luego copiar otra vez la línea completa de esta guía.
+- Si Docker muestra «Container ... Creating» en rojo al usar 2>&1,
+  revisar el JSON final y el código de salida. Ese texto por sí solo no
+  demuestra que el proceso haya fallado. No ignorar tracebacks reales.
+- Si falla un comando, guardar la salida y detener la secuencia.
+- Si el dashboard tarda, repetir consultas de lectura, no publicaciones.
+- Una conexión rechazada al dashboard requiere comprobar servicios/logs;
+  no se soluciona borrando volúmenes.
+- Los 20 o 30 segundos son esperas orientativas, no garantías de latencia.
