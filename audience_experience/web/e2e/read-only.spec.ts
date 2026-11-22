@@ -4,18 +4,36 @@ import path from 'node:path'
 const evidence=path.resolve('../../work/i5-evidence/browser')
 test.beforeAll(()=>mkdirSync(evidence,{recursive:true}))
 
+test('histórico refleja disponibilidad real sin rellenar datos ausentes',async({page})=>{
+  const response=await page.request.get('/api/v1/historical')
+  expect([200,503]).toContain(response.status())
+  await page.goto('/')
+  if(response.status()===503){
+    await expect(page.getByRole('status')).toContainText('Todavía falta importar la exportación I3')
+    await expect(page.getByText('Conexiones observadas',{exact:true})).toHaveCount(0)
+  }else{
+    const data=await response.json()
+    await expect(page.getByText(data.metrics.silver_rows.toLocaleString('es-CO'),{exact:true})).toBeVisible()
+    await expect(page.getByText(`Snapshot histórico · ${data.release}`)).toBeVisible()
+  }
+  await page.screenshot({path:path.join(evidence,'historical-real-state.png'),fullPage:true})
+})
+
 test('render real, navegación y responsive sin modificar el origen',async({page})=>{
   const errors:string[]=[]
   page.on('pageerror',error=>errors.push(error.message))
-  const api=await page.request.get('/api/v1/snapshot')
+  const proofRun=process.env.I5_PROOF_RUN
+  const query=proofRun?`?run_id=${encodeURIComponent(proofRun)}`:''
+  const suffix=proofRun?`-${proofRun}`:''
+  const api=await page.request.get(`/api/v1/snapshot${query}`)
   expect(api.ok()).toBeTruthy()
   const data=await api.json()
-  await page.goto('/')
-  await page.getByRole('button',{name:'Laboratorio de datos'}).first().click()
+  await page.goto(`/${query}`)
+  if(!proofRun) await page.getByRole('button',{name:'Laboratorio de datos'}).first().click()
   await expect(page.getByTestId('total-events')).toHaveText(data.metrics.total.toLocaleString('es-CO'))
   await expect(page.getByText('WebSocket activo')).toBeVisible()
   await expect(page.getByText(/no son actividad actual de Twitch/)).toBeVisible()
-  await page.screenshot({path:path.join(evidence,'desktop-real.png'),fullPage:true})
+  await page.screenshot({path:path.join(evidence,`desktop-real${suffix}.png`),fullPage:true})
   await page.getByRole('button',{name:'Procesamiento',exact:true}).click()
   await expect(page.getByText('Estado del consumidor',{exact:true})).toBeVisible()
   await page.getByRole('button',{name:'Audiencia del replay',exact:true}).click()
@@ -25,7 +43,7 @@ test('render real, navegación y responsive sin modificar el origen',async({page
   await expect(page.getByTestId('total-events')).toBeVisible()
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)
   expect(overflow).toBeFalsy()
-  await page.screenshot({path:path.join(evidence,'mobile-real.png'),fullPage:true})
+  await page.screenshot({path:path.join(evidence,`mobile-real${suffix}.png`),fullPage:true})
   expect(errors).toEqual([])
 })
 

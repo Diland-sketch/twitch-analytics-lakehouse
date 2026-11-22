@@ -1,0 +1,19 @@
+{
+  "name": "twitch-candidate-readonly-audit",
+  "max_concurrent_runs": 1,
+  "timeout_seconds": 3600,
+  "parameters": [
+    {"name": "project_root", "default": "/Workspace/REEMPLAZAR_CHECKOUT_CANDIDATO"},
+    {"name": "catalog", "default": "workspace"},
+    {"name": "schema", "default": "twitch_lakehouse"},
+    {"name": "release", "default": "r01"}
+  ],
+  "tasks": [
+    {"task_key": "preflight", "max_retries": 0, "notebook_task": {"notebook_path": "/Workspace/REEMPLAZAR_CHECKOUT_CANDIDATO/notebooks/11_candidate_readonly_job", "source": "WORKSPACE", "base_parameters": {"stage": "preflight"}}},
+    {"task_key": "validate", "depends_on": [{"task_key": "preflight"}], "max_retries": 0, "notebook_task": {"notebook_path": "/Workspace/REEMPLAZAR_CHECKOUT_CANDIDATO/notebooks/11_candidate_readonly_job", "source": "WORKSPACE", "base_parameters": {"stage": "validate"}}},
+    {"task_key": "pending_processing", "depends_on": [{"task_key": "validate"}], "max_retries": 0, "notebook_task": {"notebook_path": "/Workspace/REEMPLAZAR_CHECKOUT_CANDIDATO/notebooks/11_candidate_readonly_job", "source": "WORKSPACE", "base_parameters": {"stage": "pending_processing"}}},
+    {"task_key": "reconcile", "depends_on": [{"task_key": "pending_processing"}], "max_retries": 0, "notebook_task": {"notebook_path": "/Workspace/REEMPLAZAR_CHECKOUT_CANDIDATO/notebooks/11_candidate_readonly_job", "source": "WORKSPACE", "base_parameters": {"stage": "reconcile"}}},
+    {"task_key": "publish", "depends_on": [{"task_key": "reconcile"}], "max_retries": 0, "notebook_task": {"notebook_path": "/Workspace/REEMPLAZAR_CHECKOUT_CANDIDATO/notebooks/11_candidate_readonly_job", "source": "WORKSPACE", "base_parameters": {"stage": "publish"}}},
+    {"task_key": "evidence", "depends_on": [{"task_key": "preflight"}, {"task_key": "validate"}, {"task_key": "pending_processing"}, {"task_key": "reconcile"}, {"task_key": "publish"}], "run_if": "ALL_DONE", "max_retries": 0, "notebook_task": {"notebook_path": "/Workspace/REEMPLAZAR_CHECKOUT_CANDIDATO/notebooks/11_candidate_readonly_job", "source": "WORKSPACE", "base_parameters": {"stage": "evidence"}}}
+  ]
+}

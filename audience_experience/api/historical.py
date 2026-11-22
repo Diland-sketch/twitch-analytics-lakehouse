@@ -46,6 +46,17 @@ def load_historical(path: Path):
             raise ValueError("Fila de ranking inválida")
         if not row["streamer_username"] or type(row.get("interactions")) is not int or row["interactions"] < 0:
             raise ValueError("Ranking numérico inválido")
+        # React usa estos campos: no aceptar un PASS que luego renderice NaN.
+        for key in ("unique_users", "recurring_users", "estimated_minutes"):
+            if type(row.get(key)) is not int or row[key] < 0:
+                raise ValueError(f"Ranking {key} ausente o inválido")
+        users, recurring = row["unique_users"], row["recurring_users"]
+        if users == 0 or users > row["interactions"] or recurring > users:
+            raise ValueError("Denominador o numerador de recurrencia inválido")
+        rate = row.get("recurrence_rate")
+        if (type(rate) not in (int, float) or not math.isfinite(rate) or
+                not math.isclose(rate, recurring / users, rel_tol=0, abs_tol=1e-12)):
+            raise ValueError("Recurrencia no concilia con su denominador")
     if sorted(row.get("duration_bucket") for row in duration if isinstance(row, dict)) != list(range(5)):
         raise ValueError("Buckets de duración inválidos")
     if any(type(row.get("interactions")) is not int or row["interactions"] < 0 for row in duration):

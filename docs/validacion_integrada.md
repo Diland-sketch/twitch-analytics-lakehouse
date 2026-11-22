@@ -1,5 +1,8 @@
 # Validación integrada — rama `desarollo`
 
+La evidencia del 21/11 se conserva sin alteraciones. Para la candidata del 22/11,
+pruebas ejecutadas hoy y pendientes reales, consultar [cierre](entrega_final/CIERRE_20261122.md).
+
 ## Evidencia comprobada el 21 de noviembre de 2026
 
 GitHub Actions: [ejecución 44958178931](https://github.com/Diland-sketch/twitch-analytics-lakehouse/actions/runs/44958178931), commit `fd13944b814de81d6654254f8bd6bd4e3a6b9d99`, resultado global **success**.

@@ -10,6 +10,11 @@ Esta rama reúne I1/I2/I4/I5 (herencia de feat/i5-react-live-experience) e I3 (a
 - I5: React + FastAPI + WebSocket, E2E local de 100 eventos documentado; I5 solo lee el estado I4.
 
 ## Integración y límites
+
+Actualización de cierre 22/11: ya existe puente **manual de JSON Gold I3 hacia
+React**, con notebook 10 y lector API histórico; no es sincronización continua.
+Los pendientes anteriores son históricos. Estado real, bloqueantes y prueba de
+la candidata: [cierre de entrega](entrega_final/CIERRE_20261122.md).
 Esta consolidación une los archivos de las ramas y preserva la historia; no equivale a una prueba integral conjunta ni implica que I3 alimente la interfaz I5. El streaming I4/I5 usa SQLite local, no Delta Lake en Databricks. Los eventos son reproducción histórica y no actividad en vivo de Twitch. Ningún proceso probado aquí maneja 124 millones de filas.
 
 ## Pendientes priorizados sin asignación de personas

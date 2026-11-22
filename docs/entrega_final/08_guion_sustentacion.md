@@ -49,7 +49,7 @@ Resumen de comprobaciones: batch 3.051.733 Silver / 162.625 streamers / 95.887.1
 
 ## Checklist previo
 
-- [ ] Git en `desarollo`, commit registrado, sin cambios inesperados.
+- [ ] Git en `desarollo` o candidata versionada, commit registrado, sin cambios inesperados. En candidata pasar `-ExpectedBranch codex/release-candidate-sustentacion-20261122` al ensayo.
 - [ ] JSON Gold legítimo válido y `GET /historical` 200.
 - [ ] Kafka healthy, Spark RUNNING, React accesible.
 - [ ] Nuevo UUID, snapshot inicial en 0 (captura).
