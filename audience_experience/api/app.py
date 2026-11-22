@@ -14,6 +14,7 @@ from uuid import UUID
 from fastapi import FastAPI, HTTPException, Response, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from live_monitor.storage import snapshot
+from audience_experience.api.historical import read_historical
 
 
 class Metrics(BaseModel):
@@ -124,6 +125,20 @@ def create_app(db_path=None, interval=2.0):
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             raise HTTPException(status_code=503, detail={"code": "historical_unavailable",
                 "message": "Exportación Gold I3 ausente o no válida; revisar la guía de sincronización."}) from exc
+
+    @app.get("/api/v1/historical")
+    async def get_historical(response: Response):
+        response.headers["Cache-Control"] = "no-store"
+        historical_path = Path(os.environ.get("I3_HISTORICAL_PATH",
+            "/historical/i3_historical_r01.json"))
+        try:
+            return await asyncio.to_thread(read_historical, historical_path)
+        except FileNotFoundError:
+            raise HTTPException(404, detail={"code": "historical_export_missing",
+                "message": "Ejecute notebook 10 y transfiera la exportación Gold I3."})
+        except (ValueError, OSError, json.JSONDecodeError, Exception) as exc:
+            raise HTTPException(422, detail={"code": "historical_export_invalid",
+                "message": "La exportación Gold I3 no supera las comprobaciones de calidad."})
 
     @app.get("/api/v1/health")
     def health():
