@@ -23,7 +23,7 @@ Una prueba es **PASS** solo con comando, origen, resultados observados, identida
 
 ## Auditoría de Databricks por sentencias SQL
 
-Abrir Databricks SQL Editor con Serverless; usar los archivos **separados** de `sql/`: 01 catálogo/inventario, 02 conteos y minutos, 03 claves de Silver, 04 comparación Gold I1, 05 dominios y poblaciones I3, 06 quality/deltas. **No son sentencias de escritura**. Si una consulta no devuelve filas o da NULL donde se espera cero, eso es **FAIL**. Revisión de historia Delta (sustituir ruta según release):
+Abrir Databricks SQL Editor con Serverless; usar los archivos **separados** de `sql/`: 01 catálogo/inventario, 02 conteos y minutos, 03 claves de Silver, 04 comparación Gold I1, 05 agregados I3, 06 quality/deltas, 07 dominios y buckets I3. **No son sentencias de escritura**. Si una consulta no devuelve filas o da NULL donde se espera cero, eso es **FAIL**. Revisión de historia Delta (sustituir ruta según release):
 
 ```sql
 DESCRIBE DETAIL workspace.twitch_lakehouse.bronze_interactions;
@@ -98,3 +98,7 @@ Get-ChildItem "work/entrega_final/<run_id>" -File |
 ```
 
 No subir datos ni capturas reales al repositorio. Ante fallo, conservar salidas, no limpiar volúmenes ni adulterar evidencia.
+
+## Muestreo durante el replay
+
+`scripts/validar_demo.ps1` crea `evolucion_api.jsonl` con lecturas periódicas reales mientras el productor envía. Si no detecta un valor intermedio, marca `observo_intermedio=false`; **no lo inventa**. Una ejecución de 100 eventos con rate 5 da margen de observación, pero no garantiza capturar valores intermedios si Spark agrupa el envío en un único lote. Para enseñar la progresión, abrir la pestaña Laboratorio antes de publicar y registrar un video/captura si se permite. La marca `status=PASS` del script se refiere a conciliación e integridad, no a SLA de latencia ni a la observación necesaria de cada punto temporal.

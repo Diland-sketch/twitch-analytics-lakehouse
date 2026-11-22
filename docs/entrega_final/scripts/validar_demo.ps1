@@ -100,6 +100,23 @@ try {
   Write-Host "run_id: $runId" -ForegroundColor Cyan
   Write-Host "Monitor: $base/?run_id=$runId"
   Write-Host 'Publicando filas históricas; Spark confirmará los conteos posteriormente.'
+  # Un observador independiente registra la evolución real de la API durante el envío.
+  # Cada línea es una lectura completa; no simula valores ni toca Kafka/Spark.
+  $samples=Join-Path $dir 'evolucion_api.jsonl'
+  $watcher=Start-Job -ArgumentList $base,$runId,$samples,$TimeoutSeconds -ScriptBlock {
+    param($url,$id,$output,$seconds)
+    $deadline=(Get-Date).AddSeconds($seconds)
+    while((Get-Date) -lt $deadline){
+      try {
+        $snap=Invoke-RestMethod -Method Get -Uri "$url/api/v1/snapshot?run_id=$id" -TimeoutSec 8
+        $line=$snap | ConvertTo-Json -Depth 32 -Compress
+        [System.IO.File]::AppendAllText($output,$line+[Environment]::NewLine,[Text.Encoding]::UTF8)
+      } catch {
+        # El propio error se preserva con la prueba principal si impide llegar al total.
+      }
+      Start-Sleep -Seconds 2
+    }
+  }
   $published=Publish-Same-Range 'productor_primero.log'
   Save-Json 'productor_estado.json' $published
   $after=Wait-Count $Count 'Tras publicación'
@@ -145,16 +162,32 @@ try {
     $report.replay_idempotent='PASS'
   }
   $report.status='PASS'
+  $sampled=@()
+  $sampleFile=Join-Path $dir 'evolucion_api.jsonl'
+  if(Test-Path -LiteralPath $sampleFile){
+    $sampled=@(Get-Content -LiteralPath $sampleFile | ForEach-Object {
+      try { ($_ | ConvertFrom-Json).metrics.total } catch { $null }
+    } | Where-Object { $null -ne $_ })
+  }
+  $report.snapshots_observados=$sampled.Count
+  $report.observo_intermedio=[bool](@($sampled | Where-Object { $_ -gt 0 -and $_ -lt $Count }).Count)
+  # No inventar estados intermedios: si muestreo no capturó uno, queda false.
   Write-Host "PASS. Evidencias locales: $dir" -ForegroundColor Green
 } catch {
   $report.status='FAIL'
   $report.error=$_.Exception.Message
   Write-Error "Prueba fallida: $($_.Exception.Message). Evidencias en $dir"
 } finally {
+  if($watcher){
+    Stop-Job -Job $watcher -ErrorAction SilentlyContinue
+    Receive-Job -Job $watcher -ErrorAction SilentlyContinue | Out-Null
+    Remove-Job -Job $watcher -Force -ErrorAction SilentlyContinue
+  }
   $report.finished_at=(Get-Date).ToUniversalTime().ToString('o')
   Save-Json 'report.json' $report
   $hashes=Get-ChildItem -LiteralPath $dir -File |
-    Get-FileHash -Algorithm SHA256 | Select-Object Path,Hash
+    ForEach-Object { Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256 } |
+    Select-Object Path,Hash
   $hashes | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $dir 'sha256_manifest.json') -Encoding UTF8
   Write-Host "Reporte: $(Join-Path $dir 'report.json')"
 }
