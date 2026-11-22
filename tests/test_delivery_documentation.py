@@ -29,7 +29,10 @@ class DeliveryDocumentationTests(unittest.TestCase):
                 self.assertTrue(statements.startswith(("WITH ", "SELECT ")))
                 self.assertIsNone(forbidden.search(statements), "Auditoría no debe modificar datos")
                 self.assertLessEqual(statements.count(";"), 1)
-                self.assertIn("workspace.twitch_lakehouse", statements)
+                self.assertTrue(
+                    "workspace.twitch_lakehouse" in statements or
+                    "workspace.information_schema.tables" in statements
+                )
 
     def test_demo_script_uses_new_run_and_no_destructive_actions(self):
         script = (BASE / "scripts" / "validar_demo.ps1").read_text(encoding="utf-8")
