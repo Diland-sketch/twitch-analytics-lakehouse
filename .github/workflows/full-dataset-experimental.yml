@@ -21,6 +21,6 @@ jobs:
         with:
           python-version: '3.11'
       - name: Sintaxis
-        run: python -m compileall -q twitch_lakehouse/full_dataset_prepare.py twitch_lakehouse/full_dataset_pipeline.py tests/test_full_dataset_prepare.py tests/test_full_dataset_pipeline.py notebooks/11_full_bootstrap.py notebooks/12_full_bronze.py notebooks/13_full_silver.py notebooks/14_full_gold.py notebooks/15_full_audit.py
+        run: python -m compileall -q twitch_lakehouse/full_dataset_prepare.py twitch_lakehouse/full_dataset_pipeline.py twitch_lakehouse/full_dataset_10m.py tests/test_full_dataset_prepare.py tests/test_full_dataset_pipeline.py tests/test_full_dataset_10m.py notebooks/16_full_10m_bootstrap.py notebooks/17_full_10m_bronze_batches.py notebooks/18_full_10m_silver.py notebooks/19_full_10m_gold.py notebooks/20_full_10m_audit.py notebooks/11_full_bootstrap.py notebooks/12_full_bronze.py notebooks/13_full_silver.py notebooks/14_full_gold.py notebooks/15_full_audit.py
       - name: Pruebas deterministas con GZIP artificial
-        run: python -m unittest tests.test_full_dataset_prepare tests.test_full_dataset_pipeline -v
+        run: python -m unittest tests.test_full_dataset_prepare tests.test_full_dataset_pipeline tests.test_full_dataset_10m -v
