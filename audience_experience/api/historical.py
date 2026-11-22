@@ -1,93 +1,57 @@
-"""Lector estricto y de solo lectura de una exportación Gold I3.
-
-El JSON es producido por notebook 10 en Databricks y transferido manualmente.
-Este módulo no conecta con Databricks ni requiere credenciales en el frontend.
-"""
+"""Lector de exportación agregada Gold I3: local, explícito y solo lectura."""
 import json
-from datetime import datetime
+import math
 from pathlib import Path
-from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-class ExactModel(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+MAX_BYTES = 2_000_000
+REQUIRED_METRICS = ("bronze_rows", "silver_rows", "rejected_rows",
+                    "gold_streamers", "estimated_minutes")
 
-class Quality(ExactModel):
-    status: str
-    scope: str
-    bronze_rows: int = Field(ge=0)
-    silver_rows: int = Field(gt=0)
-    rejected_rows: int = Field(ge=0)
-    duplicates_removed_inferred: int = Field(ge=0)
-    silver_duplicate_keys: int = Field(ge=0)
-    gold_streamers: int = Field(gt=0)
-    estimated_minutes: int = Field(ge=0)
 
-class Streamer(ExactModel):
-    streamer_username: str
-    interactions: int = Field(ge=0)
-    unique_users: int = Field(ge=0)
-    unique_streams: int = Field(ge=0)
-    recurring_users: int = Field(ge=0)
-    recurrence_rate: float = Field(ge=0, le=1)
-    estimated_minutes: int = Field(ge=0)
-
-class Duration(ExactModel):
-    duration_bucket: int = Field(ge=0, le=4)
-    interactions: int = Field(ge=0)
-    estimated_minutes: int = Field(ge=0)
-
-class Activity(ExactModel):
-    relative_minutes: int = Field(ge=0)
-    connection_starts: int = Field(ge=0)
-
-class HistoricalExport(ExactModel):
-    schema_version: str
-    kind: str
-    release: str
-    source_namespace: str
-    exported_at: datetime
-    source_versions: dict[str, int]
-    quality: Quality
-    top_streamers: list[Streamer] = Field(max_length=20)
-    duration_buckets: list[Duration] = Field(max_length=5)
-    activity: list[Activity] = Field(max_length=120)
-    activity_truncated: bool
-    definitions: dict[str, str]
-
-    @model_validator(mode="after")
-    def check_consistency(self):
-        if self.schema_version != "1.0" or self.kind != "i3_historical_aggregates":
-            raise ValueError("Versión o tipo histórico desconocidos")
-        if self.quality.status != "PASS" or self.quality.scope != "I1_COUNTS_AND_I3_EXACT_AGGREGATES":
-            raise ValueError("Quality no validado")
-        q = self.quality
-        if q.bronze_rows - q.rejected_rows - q.duplicates_removed_inferred != q.silver_rows:
-            raise ValueError("Bronze y Silver no concilian")
-        if q.silver_duplicate_keys:
-            raise ValueError("Claves Silver duplicadas")
-        if set(self.source_versions) != {"bronze_version","silver_version","rejects_version","gold_version"} or any(
-                type(v) is not int or v < 0 for v in self.source_versions.values()):
-            raise ValueError("Versiones Delta incorrectas")
-        if any(x.recurring_users > x.unique_users or x.interactions > q.silver_rows
-               for x in self.top_streamers):
-            raise ValueError("Valores de streamer fuera de dominio")
-        if len({x.streamer_username for x in self.top_streamers}) != len(self.top_streamers):
-            raise ValueError("Streamers duplicados")
-        if any(self.top_streamers[i].interactions < self.top_streamers[i + 1].interactions
-               for i in range(len(self.top_streamers)-1)):
-            raise ValueError("Ranking desordenado")
-        if sum(x.interactions for x in self.duration_buckets) != q.silver_rows:
-            raise ValueError("Distribución no concilia con Silver")
-        if sum(x.estimated_minutes for x in self.duration_buckets) != q.estimated_minutes:
-            raise ValueError("Minutos por duración no concilian")
-        if len({x.duration_bucket for x in self.duration_buckets}) != len(self.duration_buckets):
-            raise ValueError("Buckets duplicados")
-        return self
-
-def read_historical(path: Path) -> dict:
-    if not path.is_file():
-        raise FileNotFoundError("Archivo de exportación Gold I3 no encontrado")
-    if path.stat().st_size > 2_000_000:
-        raise ValueError("La exportación supera el límite de 2 MB")
-    content = json.loads(path.read_text(encoding="utf-8"))
-    return HistoricalExport.model_validate(content).model_dump(mode="json")
+def load_historical(path: Path):
+    if not path.is_file() or path.stat().st_size > MAX_BYTES:
+        raise ValueError("Archivo histórico ausente o excesivo")
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or data.get("schema_version") != "i3-historical-v1":
+        raise ValueError("Contrato histórico incorrecto")
+    if data.get("status") != "PASS" or not isinstance(data.get("release"), str):
+        raise ValueError("Publicación I3 no validada")
+    if not isinstance(data.get("exported_at"), str) or not data["exported_at"].endswith("Z"):
+        raise ValueError("Falta fecha de exportación UTC")
+    metrics = data.get("metrics")
+    if not isinstance(metrics, dict):
+        raise ValueError("Métricas ausentes")
+    for key in REQUIRED_METRICS:
+        value = metrics.get(key)
+        if type(value) is not int or value < 0:
+            raise ValueError(f"Métrica inválida: {key}")
+    if metrics["silver_rows"] == 0 or metrics["gold_streamers"] == 0:
+        raise ValueError("Publicación I3 vacía")
+    if metrics["silver_rows"] > metrics["bronze_rows"]:
+        raise ValueError("Población inconsistente")
+    for key in ("top10_share", "top100_share"):
+        value = metrics.get(key)
+        if type(value) not in (float, int) or not math.isfinite(value) or not 0 <= value <= 1:
+            raise ValueError(f"Participación inválida: {key}")
+    if metrics["top10_share"] > metrics["top100_share"]:
+        raise ValueError("Concentración no ordenada")
+    ranking = data.get("ranking")
+    duration = data.get("duration")
+    if not isinstance(ranking, list) or len(ranking) > 20:
+        raise ValueError("Ranking inválido")
+    if not isinstance(duration, list) or len(duration) != 5:
+        raise ValueError("Distribución incompleta")
+    for row in ranking:
+        if not isinstance(row, dict) or not isinstance(row.get("streamer_username"), str):
+            raise ValueError("Fila de ranking inválida")
+        if not row["streamer_username"] or type(row.get("interactions")) is not int or row["interactions"] < 0:
+            raise ValueError("Ranking numérico inválido")
+    if sorted(row.get("duration_bucket") for row in duration if isinstance(row, dict)) != list(range(5)):
+        raise ValueError("Buckets de duración inválidos")
+    if any(type(row.get("interactions")) is not int or row["interactions"] < 0 for row in duration):
+        raise ValueError("Conteos de duración inválidos")
+    if sum(row["interactions"] for row in duration) != metrics["silver_rows"]:
+        raise ValueError("Distribución no concilia con Silver")
+    if not isinstance(data.get("source_namespace"), str) or not data["source_namespace"]:
+        raise ValueError("Origen no identificado")
+    return data

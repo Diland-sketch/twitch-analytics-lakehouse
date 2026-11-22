@@ -6,9 +6,11 @@ services:
       dockerfile: audience_experience/api/Dockerfile
     environment:
       I4_SQLITE_PATH: /state/monitor.sqlite
+      I3_HISTORICAL_PATH: /historical/historical_snapshot.json
       PYTHONDONTWRITEBYTECODE: '1'
     volumes:
       - i4_results:/state:ro
+      - ./data:/historical:ro
     read_only: true
     tmpfs: [/tmp]
     init: true

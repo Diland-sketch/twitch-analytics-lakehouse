@@ -112,6 +112,19 @@ def create_app(db_path=None, interval=2.0):
             raise HTTPException(503, detail={"code": "storage_unavailable",
                 "message": "Resultados persistidos no disponibles. Se conserva I4 sin cambios."})
 
+
+    @app.get("/api/v1/historical")
+    def historical(response: Response):
+        """Publicación estática Gold I3: nunca llama Databricks ni toca SQLite."""
+        from audience_experience.api.historical import load_historical
+        response.headers["Cache-Control"] = "no-store"
+        source = Path(os.environ.get("I3_HISTORICAL_PATH", "/historical/historical_snapshot.json"))
+        try:
+            return load_historical(source)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            raise HTTPException(status_code=503, detail={"code": "historical_unavailable",
+                "message": "Exportación Gold I3 ausente o no válida; revisar la guía de sincronización."}) from exc
+
     @app.get("/api/v1/health")
     def health():
         return {"service": "audience-experience-api", "status": "ok", "read_only": True}
