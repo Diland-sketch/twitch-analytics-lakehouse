@@ -1,0 +1,31 @@
+{
+  "resources": {
+    "pipelines": {
+      "kafka_bronze_native": {
+        "name": "twitch-kafka-native-bronze-pilot",
+        "serverless": true,
+        "continuous": true,
+        "channel": "PREVIEW",
+        "lifecycle": {"prevent_destroy": true},
+        "ingestion_definition": {
+          "connection_name": "${var.connection_name}",
+          "objects": [{
+            "table": {
+              "source_table": "N/A",
+              "destination_catalog": "workspace",
+              "destination_schema": "twitch_kafka_experimental",
+              "destination_table": "bronze_kafka_native_pilot_v1",
+              "table_configuration": {"source_metadata_column": "kafka_source"},
+              "connector_options": {
+                "kafka_options": {
+                  "topics": ["${var.topic}"],
+                  "starting_offset": "earliest"
+                }
+              }
+            }
+          }]
+        }
+      }
+    }
+  }
+}

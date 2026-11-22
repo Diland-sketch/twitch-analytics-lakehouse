@@ -1,0 +1,23 @@
+{
+  "name": "twitch-kafka-bronze-pilot-1000",
+  "max_concurrent_runs": 1,
+  "timeout_seconds": 1800,
+  "queue": {"enabled": true},
+  "parameters": [{"name": "manifest_json", "default": ""}],
+  "tasks": [{
+    "task_key": "bronze",
+    "timeout_seconds": 1800,
+    "max_retries": 0,
+    "notebook_task": {
+      "notebook_path": "/Workspace/Repos/REPLACE/twitch-analytics-lakehouse/notebooks/21_kafka_bronze_pilot",
+      "source": "WORKSPACE",
+      "base_parameters": {
+        "repo_root": "/Workspace/Repos/REPLACE/twitch-analytics-lakehouse",
+        "manifest_json": "{{job.parameters.manifest_json}}",
+        "secret_scope": "twitch-kafka",
+        "sasl_mechanism": "SCRAM-SHA-512",
+        "ca_secret_key": ""
+      }
+    }
+  }]
+}

@@ -1,0 +1,41 @@
+{
+  "scope": "LOCAL_CODE_VALIDATION_NOT_REMOTE_INGESTION",
+  "base_branch": "experimental/full-dataset-124m",
+  "base_commit": "d3a53582b4c96da34697cc893d124e83b0bb5cde",
+  "branch": "codex/kafka-databricks-bronze-pilot",
+  "local_contracts": {
+    "status": "PASS",
+    "tests": 27,
+    "seconds": 3.053,
+    "log_local_untracked": "work/contracts-native.log"
+  },
+  "spark_fixtures": {
+    "status": "PASS",
+    "spark_version": "3.5.8",
+    "java_major": 17,
+    "tests": 4,
+    "seconds": 33.668,
+    "population": "ARTIFICIAL_FIXTURES",
+    "log_local_untracked": "work/spark-native-fixtures.log"
+  },
+  "real_csv_preparation": {
+    "status": "PREPARED_NOT_SENT",
+    "rows": 1000,
+    "source_sha256": "11d3bdb49683f651eb6b0ba806bf317db68646efc0c7de2d02d750201fd8ef69",
+    "payload_sha256": "1fbb5b2a73afaf25dd975deb69870e039de9642b45f14b933c019873e238ecbd",
+    "note": "Local preparation used a pending broker identity, not an Aiven binding. Prepare a new block directory for the authorized broker."
+  },
+  "local_kafka_smoke": {
+    "status": "FAILED_BEFORE_PUBLISH",
+    "error_type": "KafkaTimeoutError",
+    "reason_observed": "Existing I4 broker unhealthy, SIGTERM shutdown logged; not restarted or modified",
+    "acknowledged": 0,
+    "log_local_untracked": "work/local-real-1000.log"
+  },
+  "databricks_bundle_validate": "NOT_RUN_CLI_NOT_INSTALLED",
+  "aiven_connection_test": "NOT_RUN_NO_AUTHORIZED_CONFIG_AVAILABLE",
+  "databricks_bronze_pilot": "NOT_RUN",
+  "remote_processed_rows": null,
+  "massive_scale": "BLOCKED_UNTIL_REMOTE_PILOT_PASS",
+  "existing_modules_changed": []
+}

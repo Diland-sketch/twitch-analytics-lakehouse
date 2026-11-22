@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv-kafka/
 venv/
 *.egg-info/
 build/
