@@ -69,12 +69,14 @@ function Wait-ConsumerReady([datetimeoffset]$since) {
   $until=(Get-Date).AddSeconds($TimeoutSeconds)
   while((Get-Date) -lt $until){
     $snap=Call-Api "$base/api/v1/snapshot?run_id=$runId"
-    if($snap.consumer -and $snap.consumer.state -eq 'FAILED'){
-      throw 'Consumidor Spark reporta FAILED; conservar logs y detener ensayo'
+    if($snap.consumer -and (Get-HeartbeatInstant $snap.consumer.heartbeat) -gt $since){
+      # Un FAILED anterior al inicio del contenedor nuevo pertenece al cierre
+      # previo: no certifica fallo del consumidor que todavía está arrancando.
+      if($snap.consumer.state -eq 'FAILED'){
+        throw 'Nuevo consumidor Spark reporta FAILED; conservar logs y detener ensayo'
+      }
+      if($snap.consumer.state -eq 'RUNNING' -and -not $snap.consumer.stale){return $snap}
     }
-    if($snap.consumer -and $snap.consumer.state -eq 'RUNNING' -and
-       -not $snap.consumer.stale -and
-       (Get-HeartbeatInstant $snap.consumer.heartbeat) -gt $since){return $snap}
     Start-Sleep -Seconds 2
   }
   throw 'Spark no confirmó RUNNING con heartbeat nuevo dentro del plazo'
@@ -180,7 +182,14 @@ try {
     $restartRequestedAt=[datetimeoffset]::UtcNow
     & docker compose -f live_monitor/compose.yaml restart spark | Out-Null
     if($LASTEXITCODE -ne 0){throw 'Fallo restart spark'}
-    $readyAfterRestart=Wait-ConsumerReady $restartRequestedAt
+    $containerId=(& docker compose -f live_monitor/compose.yaml ps -q spark).Trim()
+    if($LASTEXITCODE -ne 0 -or -not $containerId){throw 'No se identificó el contenedor Spark reiniciado'}
+    $startedAtText=(& docker inspect --format '{{.State.StartedAt}}' $containerId).Trim()
+    if($LASTEXITCODE -ne 0){throw 'No se pudo verificar StartedAt del consumidor nuevo'}
+    $startedAt=Get-HeartbeatInstant $startedAtText
+    if($startedAt -le $restartRequestedAt){throw 'StartedAt no confirma un contenedor reiniciado'}
+    $report['spark_container_started_at']=$startedAtText
+    $readyAfterRestart=Wait-ConsumerReady $startedAt
     Save-Json 'consumidor_reiniciado.json' $readyAfterRestart.consumer
     $restartSnap=Wait-Count $Count 'Tras reinicio Spark'
     Check-Counts $restartSnap 'posterior_reinicio.json'
