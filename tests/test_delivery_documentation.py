@@ -48,7 +48,7 @@ class DeliveryDocumentationTests(unittest.TestCase):
         self.assertIn("desarollo", root)
         index = (BASE / "README.md").read_text(encoding="utf-8")
         self.assertIn("100k_a.csv", index)
-        self.assertIn("sincronización automática", index)
+        self.assertIn("integración automática continua", index)
         self.assertIn("Kafka", index)
         self.assertIn("Databricks", index)
 
