@@ -56,7 +56,7 @@ function Wait-Count([int]$target,[string]$stage){
     }
     Start-Sleep -Seconds 2
   }
-  throw "$stage: se agotó el tiempo esperando $target eventos únicos. $lastError"
+  throw "${stage}: se agotó el tiempo esperando $target eventos únicos. $lastError"
 }
 function Publish-Same-Range([string]$fileName) {
   $argsList=@('compose','-f','live_monitor/compose.yaml','run','--rm','--no-deps',
