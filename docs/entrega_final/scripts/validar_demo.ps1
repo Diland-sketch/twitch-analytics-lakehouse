@@ -19,6 +19,7 @@ param(
   [ValidateRange(1,10000)][int]$Count=100,
   [ValidateRange(0.1,1000)][double]$Rate=5,
   [ValidateRange(60,1800)][int]$TimeoutSeconds=300,
+  [ValidateNotNullOrEmpty()][string]$ExpectedBranch='desarollo',
   [switch]$RestartSpark,
   [switch]$Reenviar
 )
@@ -58,6 +59,20 @@ function Wait-Count([int]$target,[string]$stage){
   }
   throw "${stage}: se agotó el tiempo esperando $target eventos únicos. $lastError"
 }
+function Wait-ConsumerReady([datetimeoffset]$since) {
+  $until=(Get-Date).AddSeconds($TimeoutSeconds)
+  while((Get-Date) -lt $until){
+    $snap=Call-Api "$base/api/v1/snapshot?run_id=$runId"
+    if($snap.consumer -and $snap.consumer.state -eq 'FAILED'){
+      throw 'Consumidor Spark reporta FAILED; conservar logs y detener ensayo'
+    }
+    if($snap.consumer -and $snap.consumer.state -eq 'RUNNING' -and
+       -not $snap.consumer.stale -and
+       [datetimeoffset]::Parse($snap.consumer.heartbeat) -gt $since){return $snap}
+    Start-Sleep -Seconds 2
+  }
+  throw 'Spark no confirmó RUNNING con heartbeat nuevo dentro del plazo'
+}
 function Publish-Same-Range([string]$fileName) {
   $argsList=@('compose','-f','live_monitor/compose.yaml','run','--rm','--no-deps',
     'producer','python3','-m','live_monitor.producer','--csv','/input/100k_a.csv',
@@ -84,7 +99,7 @@ function Check-Counts($snap,$name){
 try {
   $branch=(& git branch --show-current).Trim()
   $commit=(& git rev-parse HEAD).Trim()
-  if($branch -ne 'desarollo'){throw "Rama inesperada $branch; se exige desarollo"}
+  if($branch -ne $ExpectedBranch){throw "Rama inesperada $branch; se exige $ExpectedBranch"}
   $digest=(Get-FileHash -LiteralPath $env:TWITCH_CSV -Algorithm SHA256).Hash
   $report['branch']=$branch
   $report['commit']=$commit
@@ -156,8 +171,11 @@ try {
   Write-Host "PASS: $Count únicos; válidos=$($after.metrics.valid); inválidos=$($after.metrics.invalid)" -ForegroundColor Green
   if($RestartSpark){
     Write-Host 'Reiniciando solo Spark, sin eliminar volúmenes ni checkpoints.'
+    $restartRequestedAt=[datetimeoffset]::UtcNow
     & docker compose -f live_monitor/compose.yaml restart spark | Out-Null
     if($LASTEXITCODE -ne 0){throw 'Fallo restart spark'}
+    $readyAfterRestart=Wait-ConsumerReady $restartRequestedAt
+    Save-Json 'consumidor_reiniciado.json' $readyAfterRestart.consumer
     $restartSnap=Wait-Count $Count 'Tras reinicio Spark'
     Check-Counts $restartSnap 'posterior_reinicio.json'
     if([long]$restartSnap.metrics.valid -ne [long]$after.metrics.valid -or
