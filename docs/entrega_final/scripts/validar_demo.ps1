@@ -86,11 +86,11 @@ try {
   $commit=(& git rev-parse HEAD).Trim()
   if($branch -ne 'desarollo'){throw "Rama inesperada $branch; se exige desarollo"}
   $digest=(Get-FileHash -LiteralPath $env:TWITCH_CSV -Algorithm SHA256).Hash
-  $report.branch=$branch
-  $report.commit=$commit
+  $report['branch']=$branch
+  $report['commit']=$commit
   $report.source_sha256=$digest
-  $report.source_name=[IO.Path]::GetFileName($env:TWITCH_CSV)
-  $report.scope='historical_csv_replay_not_live_twitch'
+  $report['source_name']=[IO.Path]::GetFileName($env:TWITCH_CSV)
+  $report['scope']='historical_csv_replay_not_live_twitch'
   $apiHealth=Call-Api "$base/api/v1/health"
   if($apiHealth.status -ne 'ok'){throw 'API health no está OK'}
   $apiHealth | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath (Join-Path $dir 'api_health.json') -Encoding UTF8
@@ -121,11 +121,11 @@ try {
   Save-Json 'productor_estado.json' $published
   $after=Wait-Count $Count 'Tras publicación'
   Check-Counts $after 'despues.json'
-  $report.after_unique=[long]$after.metrics.total
-  $report.after_valid=[long]$after.metrics.valid
-  $report.after_invalid=[long]$after.metrics.invalid
-  $report.after_minutes=[long]$after.metrics.estimated_minutes_total
-  $report.transport_before_replay=[long]$after.transport_total
+  $report['after_unique']=[long]$after.metrics.total
+  $report['after_valid']=[long]$after.metrics.valid
+  $report['after_invalid']=[long]$after.metrics.invalid
+  $report['after_minutes']=[long]$after.metrics.estimated_minutes_total
+  $report['transport_before_replay']=[long]$after.transport_total
   Write-Host "PASS: $Count únicos; válidos=$($after.metrics.valid); inválidos=$($after.metrics.invalid)" -ForegroundColor Green
   if($RestartSpark){
     Write-Host 'Reiniciando solo Spark, sin eliminar volúmenes ni checkpoints.'
@@ -138,7 +138,7 @@ try {
       [long]$restartSnap.metrics.estimated_minutes_total -ne [long]$after.metrics.estimated_minutes_total){
       throw 'Métricas cambiaron tras reinicio controlado'
     }
-    $report.restart_spark='PASS'
+    $report['restart_spark']='PASS'
   }
   if($Reenviar){
     Write-Host 'Reenviando mismo run_id, fuente y rango: offsets pueden crecer pero únicos NO.'
@@ -158,10 +158,10 @@ try {
       throw 'No se corroboró el registro de todos los offsets del reenvío'
     }
     Check-Counts $last 'posterior_reenvio.json'
-    $report.replay_transport_increment=[long]$last.transport_total-$transport
-    $report.replay_idempotent='PASS'
+    $report['replay_transport_increment']=[long]$last.transport_total-$transport
+    $report['replay_idempotent']='PASS'
   }
-  $report.status='PASS'
+  $report['status']='PASS'
   $sampled=@()
   $sampleFile=Join-Path $dir 'evolucion_api.jsonl'
   if(Test-Path -LiteralPath $sampleFile){
@@ -169,21 +169,21 @@ try {
       try { ($_ | ConvertFrom-Json).metrics.total } catch { $null }
     } | Where-Object { $null -ne $_ })
   }
-  $report.snapshots_observados=$sampled.Count
-  $report.observo_intermedio=[bool](@($sampled | Where-Object { $_ -gt 0 -and $_ -lt $Count }).Count)
+  $report['snapshots_observados']=$sampled.Count
+  $report['observo_intermedio']=[bool](@($sampled | Where-Object { $_ -gt 0 -and $_ -lt $Count }).Count)
   # No inventar estados intermedios: si muestreo no capturó uno, queda false.
   Write-Host "PASS. Evidencias locales: $dir" -ForegroundColor Green
 } catch {
-  $report.status='FAIL'
-  $report.error=$_.Exception.Message
-  Write-Error "Prueba fallida: $($_.Exception.Message). Evidencias en $dir"
+  $report['status']='FAIL'
+  $report['error']=$_.Exception.Message
+  Write-Warning "Prueba fallida: $($_.Exception.Message). Evidencias en $dir"
 } finally {
   if($watcher){
     Stop-Job -Job $watcher -ErrorAction SilentlyContinue
     Receive-Job -Job $watcher -ErrorAction SilentlyContinue | Out-Null
     Remove-Job -Job $watcher -Force -ErrorAction SilentlyContinue
   }
-  $report.finished_at=(Get-Date).ToUniversalTime().ToString('o')
+  $report['finished_at']=(Get-Date).ToUniversalTime().ToString('o')
   Save-Json 'report.json' $report
   $hashes=Get-ChildItem -LiteralPath $dir -File |
     ForEach-Object { Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256 } |
@@ -191,4 +191,4 @@ try {
   $hashes | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $dir 'sha256_manifest.json') -Encoding UTF8
   Write-Host "Reporte: $(Join-Path $dir 'report.json')"
 }
-if($report.status -ne 'PASS'){exit 1}
+if($report['status'] -ne 'PASS'){exit 1}
