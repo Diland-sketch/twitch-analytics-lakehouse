@@ -1,12 +1,16 @@
 import {useEffect, useState} from 'react'
 import type {Snapshot, LinkState} from '../types'
 
-export function useLiveSnapshot(runId: string) {
+export function useLiveSnapshot(runId: string, enabled = true) {
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null)
   const [link, setLink] = useState<LinkState>('loading')
   const [error, setError] = useState<string | null>(null)
   const [refresh, setRefresh] = useState(0)
   useEffect(() => {
+    if (!enabled) {
+      setSnapshot(null); setLink('loading'); setError(null)
+      return
+    }
     let disposed = false, socket: WebSocket | null = null, retry: ReturnType<typeof setTimeout> | undefined
     let poll: ReturnType<typeof setInterval> | undefined, watchdog: ReturnType<typeof setInterval> | undefined
     let lastMessage = Date.now(), polling = false, attempts = 0, requestId = 0, acceptedRequest = 0
@@ -72,6 +76,6 @@ export function useLiveSnapshot(runId: string) {
       disposed = true; abort.abort(); socket?.close()
       clearTimeout(retry); clearInterval(poll); clearInterval(watchdog)
     }
-  }, [runId, refresh])
+  }, [runId, refresh, enabled])
   return {snapshot, link, error, reconnect: () => setRefresh(x => x + 1)}
 }

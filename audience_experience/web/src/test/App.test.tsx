@@ -7,9 +7,19 @@ vi.mock('../hooks/useLiveSnapshot',()=>({useLiveSnapshot:()=>state.value}))
 vi.mock('../components/LiveChart',()=>({LiveChart:({label}:{label:string})=><div role="img" aria-label={label}/>}))
 
 describe('experiencia de audiencia',()=>{
+  it('oculta los controles de laboratorio en el análisis histórico',()=>{
+    state.value.snapshot=fixture(100)
+    render(<App/>)
+    expect(screen.getByRole('heading',{name:'Análisis de audiencia'})).toBeInTheDocument()
+    expect(screen.queryByText('Ejecución del laboratorio')).not.toBeInTheDocument()
+    expect(screen.queryByText('WebSocket activo')).not.toBeInTheDocument()
+    fireEvent.click(screen.getAllByRole('button',{name:'Laboratorio de datos'})[0])
+    expect(screen.getByText('Ejecución del laboratorio')).toBeInTheDocument()
+  })
   it('representa cero real y conserva la advertencia histórica',()=>{
     state.value.snapshot=fixture()
     render(<App/>)
+    fireEvent.click(screen.getAllByRole('button',{name:'Laboratorio de datos'})[0])
     expect(screen.getByTestId('total-events')).toHaveTextContent('0')
     expect(screen.getByText(/no son actividad actual de Twitch/)).toBeInTheDocument()
     expect(screen.getByText('Listo para recibir actividad')).toBeInTheDocument()
@@ -18,6 +28,7 @@ describe('experiencia de audiencia',()=>{
   it('refleja el total confirmado y la selección de procesamiento',()=>{
     state.value.snapshot=fixture(100)
     render(<App/>)
+    fireEvent.click(screen.getAllByRole('button',{name:'Laboratorio de datos'})[0])
     expect(screen.getByTestId('total-events')).toHaveTextContent('100')
     fireEvent.click(screen.getAllByRole('button',{name:'Procesamiento'})[0])
     expect(screen.getByText('Estado del consumidor')).toBeInTheDocument()
@@ -25,6 +36,7 @@ describe('experiencia de audiencia',()=>{
   it('presenta el dato anterior con aviso de pérdida de conexión',()=>{
     state.value.snapshot=fixture(100);state.value.link='offline';state.value.error='Conexión interrumpida'
     render(<App/>)
+    fireEvent.click(screen.getAllByRole('button',{name:'Laboratorio de datos'})[0])
     expect(screen.getByRole('status')).toHaveTextContent('Conexión interrumpida')
     expect(screen.getByTestId('total-events')).toHaveTextContent('100')
     state.value.link='websocket';state.value.error=null

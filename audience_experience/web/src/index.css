@@ -47,3 +47,11 @@ button:disabled {cursor:default}
 .chart-panel,.pipeline-panel,.kpi-grid>*,.charts-grid>* {min-width:0}
 .chart-panel {overflow:hidden}
 @media(max-width:700px){.charts-grid{grid-template-columns:minmax(0,1fr)}.mobile-nav{max-width:100%}}
+
+/* Dos áreas principales. Las subpáginas técnicas permanecen dentro del laboratorio. */
+.lab-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:23px;padding:8px;background:#17171e;border:1px solid #302b3b;border-radius:12px}
+.lab-tab{display:inline-flex;align-items:center;gap:8px;padding:10px 13px;color:#a3a0b3;border:1px solid transparent;border-radius:8px;font-size:12px;cursor:pointer;white-space:nowrap;text-decoration:none;transition:background .15s,color .15s}
+.lab-tab:hover,.lab-tab:focus-visible{background:#282236;color:#e2d1f7}
+.lab-tab.active{background:#322541;border-color:#5c3e7b;color:#dfbaff}
+.lab-tab:focus-visible{outline:2px solid #b48bef;outline-offset:2px}
+@media(max-width:700px){.lab-tabs{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:thin}.lab-tab{flex:none}}
