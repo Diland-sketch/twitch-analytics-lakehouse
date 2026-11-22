@@ -125,6 +125,33 @@ try {
   $report['after_valid']=[long]$after.metrics.valid
   $report['after_invalid']=[long]$after.metrics.invalid
   $report['after_minutes']=[long]$after.metrics.estimated_minutes_total
+  # Comparación independiente con el CSV, únicamente si todas las filas
+  # son válidas y los campos temporales del rango se pueden interpretar.
+  # Si hay filas inválidas, el control sigue basándose en conciliación Spark.
+  $checkable=$true
+  [long]$expectedMinutes=0
+  $sample=@(Get-Content -LiteralPath $env:TWITCH_CSV -TotalCount $Count)
+  if($sample.Count -ne $Count){$checkable=$false}
+  foreach($line in $sample){
+    $parts=$line.Split(',')
+    [long]$startStep=0; [long]$stopStep=0
+    if($parts.Length -ne 5 -or
+       -not [long]::TryParse($parts[3].Trim(),[ref]$startStep) -or
+       -not [long]::TryParse($parts[4].Trim(),[ref]$stopStep) -or
+       $startStep -lt 0 -or $stopStep -lt $startStep){
+      $checkable=$false;break
+    }
+    $expectedMinutes+=($stopStep-$startStep)*10
+  }
+  if($checkable -and [long]$after.metrics.valid -eq $Count){
+    if($expectedMinutes -ne [long]$after.metrics.estimated_minutes_total){
+      throw "Minutos estimados del CSV ($expectedMinutes) no concilian con Spark ($($after.metrics.estimated_minutes_total))"
+    }
+    $report['minutos_esperados_csv']=$expectedMinutes
+    $report['minutos_conciliacion_csv']='PASS'
+  } else {
+    $report['minutos_conciliacion_csv']='NO_APLICA: hubo inválidos o rango no verificable'
+  }
   $report['transport_before_replay']=[long]$after.transport_total
   Write-Host "PASS: $Count únicos; válidos=$($after.metrics.valid); inválidos=$($after.metrics.invalid)" -ForegroundColor Green
   if($RestartSpark){
