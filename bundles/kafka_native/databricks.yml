@@ -1,0 +1,19 @@
+{
+  "bundle": {
+    "name": "twitch-kafka-native-pilot",
+    "databricks_cli_version": ">= 0.268.0"
+  },
+  "include": ["resources/*.yml"],
+  "variables": {
+    "connection_name": {"description": "Nombre UC de la conexión Kafka YA autorizada; sin secretos"},
+    "topic": {"description": "Topic dedicado al piloto de 1000 filas", "default": "twitch.pilot.twitch1000"}
+  },
+  "targets": {
+    "experimental": {
+      "default": true,
+      "workspace": {
+        "root_path": "/Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}"
+      }
+    }
+  }
+}
