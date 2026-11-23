@@ -15,8 +15,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: python -m compileall -q kafka_ingest notebooks/21_kafka_bronze_pilot.py notebooks/22_kafka_native_verify_pilot.py
-      - run: python -m unittest tests.test_kafka_ingest tests.test_kafka_native_bundle tests.test_kafka_native_audit tests.test_full_dataset_prepare tests.test_full_dataset_pipeline tests.test_full_dataset_10m -v
+      - run: python -m compileall -q kafka_ingest notebooks/21_kafka_bronze_pilot.py notebooks/22_kafka_native_verify_pilot.py notebooks/23_kafka_silver_gold_pilot.py
+      - run: python -m unittest tests.test_kafka_ingest tests.test_kafka_native_bundle tests.test_kafka_native_audit tests.test_kafka_medallion tests.test_full_dataset_prepare tests.test_full_dataset_pipeline tests.test_full_dataset_10m -v
   spark-fixtures:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -30,4 +30,4 @@ jobs:
           distribution: temurin
           java-version: '17'
       - run: pip install pyspark==3.5.8
-      - run: python -m unittest tests.test_kafka_ingest_spark -v
+      - run: python -m unittest tests.test_kafka_ingest_spark tests.test_kafka_medallion_spark -v
