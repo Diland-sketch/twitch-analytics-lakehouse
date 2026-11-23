@@ -1,0 +1,60 @@
+{
+  "evidence_scope": "REAL_DATABRICKS_BATCH_SILVER_GOLD",
+  "observed_local_date": "2026-11-22",
+  "observation_method": "Authenticated Databricks notebook UI; completed notebook output, persisted table reconciliation and bidirectional exceptAll checks executed by pipeline",
+  "runtime_source_commit": "71111138d75e4fdd2a46b441166c2838bf7fd2f1",
+  "notebook_url": "https://dbc-1977827a-5929.cloud.databricks.com/editor/notebooks/68219137323648?o=7474653191433232",
+  "duration_displayed_by_databricks": "1.8 minutes (rounded UI value, not an exact latency measurement)",
+  "source_name": "full_a.csv.gz",
+  "source_sha256": "2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e",
+  "twitch_load_id": "3c6092e0-e385-46c0-9449-8f9253803b39",
+  "report": {
+    "authorization_delta_version": 1,
+    "authorization_table": "workspace.twitch_kafka_experimental.audit_9663046b15734333a35d395af3486d99",
+    "bronze_delta_version": 7,
+    "bronze_rows": 1000,
+    "business_duplicate_rows": 0,
+    "checks": {
+      "bronze_balance": true,
+      "gold_exact_aggregates": true,
+      "gold_interactions_balance": true,
+      "gold_minutes_balance": true,
+      "persisted_counts_match_authorized_bronze": true,
+      "persisted_gold_matches_plan": true,
+      "persisted_rejects_matches_plan": true,
+      "persisted_silver_matches_plan": true,
+      "persisted_source_classification_matches_plan": true,
+      "rejects_match_classification": true,
+      "silver_keys_match_valid_sources": true,
+      "silver_no_business_duplicates": true,
+      "source_balance": true,
+      "source_identity_unique": true
+    },
+    "estimated_minutes": 41600,
+    "gold_interactions": 1000,
+    "gold_streamers": 397,
+    "offset_audit_status": "NO VERIFICABLE",
+    "rejected_source_rows": 0,
+    "release_id": "kafka_b7_r001",
+    "silver_rows": 1000,
+    "source_duplicate_rows": 0,
+    "source_rows": 1000,
+    "status": "PASS",
+    "tables": {
+      "gold": "workspace.twitch_kafka_experimental.gold_kafka_b7_r001",
+      "manifest": "workspace.twitch_kafka_experimental.manifest_kafka_b7_r001",
+      "reconciliation": "workspace.twitch_kafka_experimental.reconciliation_kafka_b7_r001",
+      "rejects": "workspace.twitch_kafka_experimental.rejects_kafka_b7_r001",
+      "silver": "workspace.twitch_kafka_experimental.silver_kafka_b7_r001",
+      "source_classification": "workspace.twitch_kafka_experimental.source_classification_kafka_b7_r001"
+    },
+    "valid_source_rows": 1000
+  },
+  "limitations": [
+    "Only the first 1000 source rows authorized by the original manifest",
+    "Kafka offsets and partitions were absent; no transport verification claimed",
+    "No claim of processing the full historical dataset",
+    "React publication not implemented in this increment",
+    "No Full refresh, checkpoint deletion, paid resources or r01 writes"
+  ]
+}

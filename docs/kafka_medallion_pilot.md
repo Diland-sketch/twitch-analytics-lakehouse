@@ -1,5 +1,18 @@
 # Bronze Kafka v7 → Silver/Gold experimental
 
+**Ejecución remota completada con PASS** en Databricks Free Edition para
+`kafka_b7_r001`: 1.000 fuentes, 1.000 filas Silver, 397 streamers Gold, 1.000
+interacciones y 41.600 minutos estimados; 0 rechazos, 0 duplicados fuente y 0
+duplicados de negocio. Los 14 controles pasaron leyendo los destinos persistidos.
+Duración mostrada por UI: 1,8 minutos (valor redondeado, no latencia exacta).
+[Evidencia JSON](evidence/kafka_b7_r001_remote.json).
+Resultado persistido: `workspace.twitch_kafka_experimental.reconciliation_kafka_b7_r001`.
+Offsets continúa **NO VERIFICABLE**. Estas cifras corresponden solo al piloto.
+
+El nombre `kafka_b7_r001` ya está ocupado por esta ejecución exitosa: no volver a
+ejecutar el notebook con ese release. Consultar sus tablas para verificar; para
+otra ejecución revisada usar un nombre nuevo, sin borrar la versión confirmada.
+
 Entrada autorizada: `workspace.twitch_kafka_experimental.bronze_kafka_native_pilot_v1`
 **versionAsOf=7**, respaldada por
 `workspace.twitch_kafka_experimental.audit_9663046b15734333a35d395af3486d99`.
