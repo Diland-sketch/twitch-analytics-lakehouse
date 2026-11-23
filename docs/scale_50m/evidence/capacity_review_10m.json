@@ -1,0 +1,14 @@
+{
+  "milestone_rows":10000000,
+  "route":"SPARK_BATCH_NOT_KAFKA",
+  "status":"PREPARATION_ALLOWED_JOB_PENDING_EXACT_MANIFEST_CHECK",
+  "previous_milestone":{"rows":1000000,"run_id":697148119262366,"status":"PASS","job_result":"SUCCESS","duration_ms":112889,"bronze_delta_bytes":79477380},
+  "input_limit_bytes":1342177280,
+  "local_free_bytes_before_preparation":55432294400,
+  "memory_strategy":"100k Parquet fragments; 10k rows per Arrow buffer; distributed Spark reads, no driver collection of source rows",
+  "job_strategy":"one active batch run, five serial tasks, max retries zero, serverless auto-optimization disabled, 2h job timeout",
+  "paid_resources_created":false,
+  "aiven_publication_authorized":false,
+  "remaining_free_edition_fair_use_quota":"Not numerically exposed; no remaining quota is asserted. Stop on resource/quota failure and retain partial results.",
+  "next_gate":"Only start after exact manifest size <= input limit, remote file hashes match, and previous publication CONFIRMED. 50M requires a separate review after real 10M PASS."
+}

@@ -1,0 +1,103 @@
+{
+  "schema_version": "twitch-bulk-parquet-v1",
+  "source_name": "full_a.csv.gz",
+  "source_sha256": "2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e",
+  "source_bytes": 6943679726,
+  "source_physical_rows": 474676930,
+  "requested_rows": 1000000,
+  "extracted_rows": 1000000,
+  "parts": [
+    {
+      "file": "part-000000.parquet",
+      "rows": 100000,
+      "first_row": 1,
+      "last_row": 100000,
+      "bytes": 9949256,
+      "sha256": "3d536ec272baa4f9b5012d2b49bedd9310e224131b71225b86c09b5233fc6976",
+      "row_digest": "09f32d2ce555c3c249191124a269c5e14c6acecc1f080fb2ec2e2dc103ff3641"
+    },
+    {
+      "file": "part-000001.parquet",
+      "rows": 100000,
+      "first_row": 100001,
+      "last_row": 200000,
+      "bytes": 9894394,
+      "sha256": "04b5849be82a9b4907bfc319e767fdce02fe33960de3464257f64db3c4a8a722",
+      "row_digest": "0308edc08cae58319c56acd25b1338b4cc7bab9d714f6b0fa01c8c70c5b1f643"
+    },
+    {
+      "file": "part-000002.parquet",
+      "rows": 100000,
+      "first_row": 200001,
+      "last_row": 300000,
+      "bytes": 9855936,
+      "sha256": "40b3941faa3647f70b2547e8d859ed869944ad3d0c9dbf5c1d3c53ebf30b81cd",
+      "row_digest": "d8ac5bfb780906811f6d6d4c56375e285ccf23cbeaeb46fea24de5da14327e46"
+    },
+    {
+      "file": "part-000003.parquet",
+      "rows": 100000,
+      "first_row": 300001,
+      "last_row": 400000,
+      "bytes": 9886390,
+      "sha256": "c7aff09cd561a49c51a2ac3f5d1ad9677ad64b873cc80fd9baa6c75754c6b26f",
+      "row_digest": "ef20d44b3c61b79cf569618231da113a513dc54e471d5a4773eeba767d3ee59b"
+    },
+    {
+      "file": "part-000004.parquet",
+      "rows": 100000,
+      "first_row": 400001,
+      "last_row": 500000,
+      "bytes": 9974800,
+      "sha256": "5de965f7efb4aad536d40c211485a3312885a0828ba10992fcae6b1d250cc76c",
+      "row_digest": "2114edfb86393900aad908ad234f4e06172631443a2e9556b09b8ef491971fe2"
+    },
+    {
+      "file": "part-000005.parquet",
+      "rows": 100000,
+      "first_row": 500001,
+      "last_row": 600000,
+      "bytes": 9901506,
+      "sha256": "7c20358b6792f9518694e7b79fed2f3ffe2d376a1e423376c2dca6b3d88422bc",
+      "row_digest": "aecffad84e3aabaa22c714faabe4fe97470f8eb888fe1d82790d88fd2fbe4097"
+    },
+    {
+      "file": "part-000006.parquet",
+      "rows": 100000,
+      "first_row": 600001,
+      "last_row": 700000,
+      "bytes": 9915454,
+      "sha256": "eb45dbedef4ee8a776214dac366647e799e470f62ea9e603fd63f216bd1411d7",
+      "row_digest": "4365e926f0aef8bc4753c00e3187bd494553cab7fc7b5e2f18108ecab611a72a"
+    },
+    {
+      "file": "part-000007.parquet",
+      "rows": 100000,
+      "first_row": 700001,
+      "last_row": 800000,
+      "bytes": 9927835,
+      "sha256": "ea435b6f81e653a56d586f95ff8d3ed71b3e3aec9a2b4cb7746f9de9dbb2d0fb",
+      "row_digest": "0a4e8877a6ee100ee0fac4ad746d325ff28f392680cd2ac8ca24b57c813c6d68"
+    },
+    {
+      "file": "part-000008.parquet",
+      "rows": 100000,
+      "first_row": 800001,
+      "last_row": 900000,
+      "bytes": 9944889,
+      "sha256": "7bc6bfe60106ce3f4ea3b4f372262d1b0f308b618186ae80d06ab938730fa10d",
+      "row_digest": "ff597146e8bf59a88cb6063a6c7f0ca03c2ab4d3ef65ecda4c5bbfa7c25ae48f"
+    },
+    {
+      "file": "part-000009.parquet",
+      "rows": 100000,
+      "first_row": 900001,
+      "last_row": 1000000,
+      "bytes": 9901813,
+      "sha256": "28beeb07e3f99c69f5bd479e014d40d8eb934172d76e3e1e5ce46896c7339ba8",
+      "row_digest": "3e3589e1376b5c6a5b99af0536bd6a1a58f7be0736f6636f328c9de82770c8a6"
+    }
+  ],
+  "elapsed_seconds": 10.969048500061035,
+  "semantics": "Observed historical chat connections, not active viewers"
+}

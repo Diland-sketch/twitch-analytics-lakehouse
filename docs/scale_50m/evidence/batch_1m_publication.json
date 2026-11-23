@@ -1,0 +1,25 @@
+{
+  "evidence_method":"Persisted publication table read through authenticated Databricks notebook SDK/UI",
+  "job_id":685945819660775,
+  "run_id":697148119262366,
+  "code_commit":"a673d0e67a848dbbb815b474d72beb87c1412165",
+  "job_result_state":"SUCCESS",
+  "run_duration_ms":112889,
+  "task_execution_ms":{"verify":14000,"bronze":24000,"silver":24000,"gold":17000,"publish":20000},
+  "publication_table":"workspace.twitch_bulk_experimental.publication_bulk_1m_r001",
+  "report":{
+    "checks":{"gold_exact":true,"gold_interactions":true,"gold_minutes":true,"rejects_persisted":true,"silver_balance":true,"silver_unique_keys":true,"source_balance":true},
+    "config":{"manifest_path":"/Volumes/workspace/twitch_bulk_experimental/source_parts/m1m/manifest.json","max_input_bytes":134217728,"predecessor":"workspace.twitch_bulk_experimental.publication_bulk_100k_r001","release":"bulk_1m_r001","rows":1000000},
+    "config_sha256":"d08302594cb8d85bdb20e2220c9fa41e3cd5dfeffce145dc82c22d4a9965db1d",
+    "delta_details":{"bronze":{"numFiles":6,"sizeInBytes":79477380},"gold":{"numFiles":1,"sizeInBytes":706225},"rejects":{"numFiles":0,"sizeInBytes":0},"silver":{"numFiles":1,"sizeInBytes":12176166}},
+    "estimated_minutes":30805650,
+    "gold_interactions":1000000,
+    "gold_streamers":78197,
+    "publication_state":"CONFIRMED",
+    "route":"SPARK_BATCH_NOT_KAFKA",
+    "rows":1000000,
+    "silver":{"business_duplicates":0,"config_sha256":"d08302594cb8d85bdb20e2220c9fa41e3cd5dfeffce145dc82c22d4a9965db1d","rejected_rows":0,"rejects_version":1,"rows_read":1000000,"silver_rows":1000000,"silver_version":1,"status":"PASS","valid_rows":1000000},
+    "source_sha256":"2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e",
+    "status":"PASS"
+  }
+}

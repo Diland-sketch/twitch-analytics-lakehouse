@@ -166,3 +166,39 @@ Los nuevos settings incluyen `disable_auto_optimization=true` y
 `retry_on_timeout=false` en cada tarea. Verificar el valor remoto después de
 actualizar el Job. No cambiar los Jobs previos del piloto Kafka.
 Referencia: [reintentos Serverless](https://docs.databricks.com/aws/en/jobs/run-serverless-jobs).
+
+La ejecución corregida `37327879921671` terminó SUCCESS en 117.849 ms,
+con las cinco tareas exitosas y publicación `bulk_100k_r001` CONFIRMED.
+Siete controles PASS; 100.000 filas Silver válidas, cero rechazos y duplicados
+de negocio; 17.702 streamers y 3.182.310 minutos estimados. Bronze Delta ocupa
+7.895.148 bytes en dos archivos; Silver 1.287.872 y Gold 154.841 bytes.
+Estos tamaños excluyen logs Delta y almacenamiento de artefactos auxiliares.
+La ruta es SPARK_BATCH_NOT_KAFKA y la población no debe sumarse al histórico r01.
+La evidencia persistida se copia en `evidence/batch_100k_publication.json`.
+
+El prefijo de 1M se preparó con 10 fragmentos/99.152.273 bytes, dentro del límite
+de entrada de 128 MiB. Su primer fragmento tiene el mismo SHA que el hito 100k.
+El manifiesto local es preparación de fuente, no prueba de procesamiento remoto.
+
+El Job de 1M `697148119262366` terminó SUCCESS en 112.889 ms y publicó
+`bulk_1m_r001` CONFIRMED con siete controles PASS: 1.000.000 válidas/Silver,
+cero rechazos/duplicados de negocio, 78.197 streamers y 30.805.650 minutos
+estimados. Bronze ocupa 79.477.380 bytes, Silver 12.176.166 y Gold 706.225.
+El total Bronze incluye el bloque 100k reutilizado; no representa otro millón
+adicional de filas transportadas por Kafka. Evidencia: `batch_1m_publication.json`.
+
+Preparación de 10M: 100 fragmentos, 992.487.125 bytes, 76,436 s de extracción
+(excluye rehash previo de fuente); manifest 33.518 bytes. Límite de entrada
+revisado: 1.342.177.280 bytes. El archivo de capacidad documenta las condiciones;
+preparar/subir no acredita ejecución remota. La cuota fair-use restante sigue sin
+ser cuantificable y un fallo impide avanzar a 50M.
+
+Para carpetas grandes, subir la carpeta local `work/m10m` desde la raíz del volumen
+con **Select folder**; verificar que el destino final es `source_parts/m10m/`.
+El selector nativo de Windows puede requerir pulsar manualmente **Cargar** y aceptar
+la confirmación de Chrome de los 101 archivos. No aceptar sustituciones de archivos.
+Antes de lanzar, comprobar archivos remotos y bytes; el Job repite la validación de
+SHA distribuida. Parámetros 10M: rows=10000000, release=bulk_10m_r001,
+manifest_path=/Volumes/workspace/twitch_bulk_experimental/source_parts/m10m/manifest.json,
+predecessor=workspace.twitch_bulk_experimental.publication_bulk_1m_r001,
+max_input_bytes=1342177280. No lanzar si no existe el manifiesto remoto completo.
