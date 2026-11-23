@@ -30,7 +30,9 @@ class BulkSparkTests(unittest.TestCase):
         m = {"schema_version": "twitch-bulk-parquet-v1", "source_sha256": "a"*64,
             "requested_rows":100000, "extracted_rows":100000,
             "parts":[{"file":target.name,"first_row":1,"last_row":100000,"rows":100000,"bytes":target.stat().st_size,"sha256":sha256(target)}]}
-        (folder / "manifest.json").write_text(json.dumps(m))
+        # Production manifests are multiline. Reader.option + text() defaults
+        # silently split them; cover the exact format observed remotely.
+        (folder / "manifest.json").write_text(json.dumps(m, indent=2))
         tables, versions, writes = {}, {}, []
         class Reader:
             def __init__(self):

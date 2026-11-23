@@ -75,7 +75,9 @@ def put_record(spark, table, value):
 
 
 def load_manifest(spark, cfg):
-    rows = spark.read.option("wholetext", True).text(cfg.manifest_path).collect()
+    # text() applies its own wholetext=False default after reader options.
+    # Pass the argument directly so pretty-printed JSON remains one record.
+    rows = spark.read.text(cfg.manifest_path, wholetext=True).collect()
     if len(rows) != 1:
         raise ValueError("Se requiere exactamente un manifiesto")
     return validate_manifest(json.loads(rows[0][0]), cfg.rows)

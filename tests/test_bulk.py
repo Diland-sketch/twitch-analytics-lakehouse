@@ -57,6 +57,8 @@ class BulkContracts(unittest.TestCase):
         job = settings("a" * 40)
         for i, task in enumerate(job["tasks"]):
             self.assertEqual(task["max_retries"], 0)
+            self.assertTrue(task["disable_auto_optimization"])
+            self.assertFalse(task["retry_on_timeout"])
             self.assertEqual(task["run_if"], "ALL_SUCCESS")
             self.assertEqual(len(task["depends_on"]), int(i > 0))
             self.assertNotIn("new_cluster", task)

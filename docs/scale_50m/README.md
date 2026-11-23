@@ -150,3 +150,19 @@ Fuentes: [dataset y métricas publicadas](https://mcauleylab.ucsd.edu/public_dat
 [Parquet/Snappy](https://arrow.apache.org/docs/python/parquet/parquet.html),
 [Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations),
 [Aiven Free tier (no confundir con el plan observado)](https://aiven.io/docs/products/kafka/free-tier/kafka-free-tier).
+
+## Primera ejecución remota y corrección
+
+Job batch creado: `685945819660775`. Primera ejecución: `148404169252947`.
+La transferencia de `manifest.json` (760 bytes) y Parquet (9.949.256 bytes)
+fue confirmada remotamente. La tarea verify falló, bloqueando todas las demás:
+`text()` aplicaba su argumento predeterminado wholetext=False después de las
+opciones del reader. El manifiesto formateado se dividía en 22 registros.
+La corrección pasa `wholetext=True` directamente a `text()` y el fixture Spark
+utiliza JSON multilínea como el real. Se conserva el fallo en evidence/.
+
+Serverless realizó además un reintento de auto-optimización pese a max_retries=0.
+Los nuevos settings incluyen `disable_auto_optimization=true` y
+`retry_on_timeout=false` en cada tarea. Verificar el valor remoto después de
+actualizar el Job. No cambiar los Jobs previos del piloto Kafka.
+Referencia: [reintentos Serverless](https://docs.databricks.com/aws/en/jobs/run-serverless-jobs).

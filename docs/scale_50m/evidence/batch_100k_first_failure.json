@@ -1,0 +1,23 @@
+{
+  "evidence_method": "Authenticated Databricks notebook SDK output observed through UI",
+  "job_id": 685945819660775,
+  "run_id": 148404169252947,
+  "code_commit": "30f5e43a1c1882ce091c443a1fbec2b269326d7c",
+  "release": "bulk_100k_r001",
+  "route": "SPARK_BATCH_NOT_KAFKA",
+  "status": "FAILED",
+  "run_duration_ms": 52331,
+  "failed_stage": "verify",
+  "error": "ValueError: Se requiere exactamente un manifiesto",
+  "attempt_run_ids": [421354772140885, 69322100522422],
+  "downstream": "bronze/silver/gold/publish SKIPPED UPSTREAM_FAILED",
+  "publication": "NOT_YET_PUBLISHED",
+  "uploaded_files": {"manifest.json": 760, "part-000000.parquet": 9949256},
+  "diagnosis": {
+    "reader_option_then_text_default_rows": 22,
+    "binary_file_length": 760,
+    "reason": "DataFrameReader.text default wholetext=False overrides reader.option; pass wholetext=True directly",
+    "additional_retry": "Serverless auto-optimization was enabled by default; disable_auto_optimization=true required separately from max_retries=0"
+  },
+  "protected_releases": "No writes requested to r01 or Kafka pilot releases"
+}
