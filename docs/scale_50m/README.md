@@ -4,6 +4,11 @@ Rama `codex/twitch-scale-50m`, basada en 754f0dc. No modifica r01, kafka_b7_r001
 kafka_b7_r002, sus reportes, el tópico piloto ni sus checkpoints. Los hitos nuevos
 se publican exclusivamente en `workspace.twitch_bulk_experimental`.
 
+Estado actualizado: 100k, 1M y 10M tienen publicación remota CONFIRMED. Los 50M
+están preparados y validados LOCALMENTE; transferencia y Job esperan autorización
+explícita. Ver [plan de aprobación 50M](APPROVAL_50M.md) para bytes, 88 destinos,
+reutilización certificada, límites no observables y recuperación.
+
 ## Diagnóstico verificable
 
 Se recorrió COMPLETO el GZIP local: **474.676.930 filas físicas**, 6.943.679.726 bytes

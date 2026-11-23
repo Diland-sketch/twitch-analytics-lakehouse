@@ -15,7 +15,7 @@ jobs:
           python-version: '3.11'
       - run: pip install pyarrow==23.0.1
       - run: python -m compileall -q bulk_lakehouse notebooks/30_bulk_batch_job.py
-      - run: python -m unittest tests.test_bulk tests.test_bulk_kafka -v
+      - run: python -m unittest tests.test_bulk tests.test_bulk_kafka tests.test_bulk_preflight -v
   spark:
     runs-on: ubuntu-latest
     timeout-minutes: 20

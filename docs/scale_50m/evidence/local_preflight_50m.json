@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "scope": "LOCAL_PARQUET_VALIDATION_NOT_REMOTE_PROCESSING",
+  "source_sha256": "2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e",
+  "source_gzip_hash_checked": true,
+  "manifest_sha256": "17595c746c42e62910480c0574bbfe948c6fb713b22d25833343112d4442d6d0",
+  "rows_verified": 50000000,
+  "parts_verified": 500,
+  "parquet_bytes": 4961822716,
+  "manifest_bytes": 166720,
+  "prefix_parts_matching": 100,
+  "files_to_transfer": 401,
+  "parquet_bytes_to_transfer": 3969335591,
+  "total_bytes_to_transfer": 3969502311,
+  "max_part_bytes": 10010980,
+  "elapsed_seconds": 280.96118810004555
+}

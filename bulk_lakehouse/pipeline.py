@@ -93,6 +93,46 @@ def gate(spark, cfg):
     return m
 
 
+def input_locations(spark, cfg, m):
+    """50M reuses certified 10M files and Delta blocks, without copying them."""
+    root = cfg.manifest_path.rsplit("/", 1)[0]
+    paths = {p["file"]: f"{root}/{p['file']}" for p in m["parts"]}
+    if cfg.rows != 50_000_000:
+        return paths, None
+    previous = read_record(spark, cfg.predecessor)
+    pc = Config(**previous["config"])
+    if (pc.rows != 10_000_000 or pc.table("publication") != cfg.predecessor
+        or previous.get("status") != "PASS" or previous.get("publication_state") != "CONFIRMED"
+        or previous.get("source_sha256") != m["source_sha256"]
+        or len(previous.get("checks", {})) != 7 or not all(previous["checks"].values())):
+        raise ValueError("Predecesor 10M no certificado")
+    prior = gate(spark, pc)
+    prefix = prior["parts"]
+    if prefix != m["parts"][:len(prefix)]:
+        raise ValueError("Prefijo 50M distinto de los archivos 10M certificados")
+    ledger = read_record(spark, pc.table("bronze_ledger"))
+    if ledger.get("status") != "PASS" or ledger.get("config_sha256") != pc.fingerprint:
+        raise ValueError("Ledger previo no autorizado")
+    expected_blocks = blocks(prior)
+    if len(ledger.get("receipts", [])) != len(expected_blocks):
+        raise ValueError("Cobertura de checkpoints previos incompleta")
+    for saved, parts in zip(ledger["receipts"], expected_blocks):
+        table = block_table(prior, parts)
+        expected = {"source_sha256":prior["source_sha256"],"parts":parts,
+            "first_row":parts[0]["first_row"],"last_row":parts[-1]["last_row"],
+            "rows":sum(p["rows"] for p in parts),"table":table}
+        if (saved.get("status") != "PASS" or saved.get("input") != expected
+            or saved.get("stats") != {"rows":expected["rows"],"distinct_rows":expected["rows"],
+                "first_row":expected["first_row"],"last_row":expected["last_row"],"hash_errors":0}
+            or saved.get("delta_version") != current_version(spark, table)
+            or read_record(spark, receipt_table(table)) != saved):
+            raise ValueError("Bloque 10M cambió; detener sin reconstruirlo")
+    prior_root = pc.manifest_path.rsplit("/", 1)[0]
+    paths.update({p["file"]:f"{prior_root}/{p['file']}" for p in prefix})
+    return paths, {"publication_table":cfg.predecessor,"parts":len(prefix),
+        "rows":pc.rows,"bronze_blocks":len(expected_blocks),"source_root":prior_root}
+
+
 def verify(spark, cfg):
     from pyspark.sql import functions as F
     start = time.monotonic()
@@ -105,8 +145,8 @@ def verify(spark, cfg):
         if (previous.get("publication_state") != "CONFIRMED" or previous.get("status") != "PASS"
             or previous.get("source_sha256") != m["source_sha256"] or previous.get("rows") != expected):
             raise ValueError("Hito previo no autoriza el siguiente")
-    root = cfg.manifest_path.rsplit("/", 1)[0]
-    files = spark.read.format("binaryFile").load([f"{root}/{p['file']}" for p in m["parts"]])
+    paths, reused = input_locations(spark, cfg, m)
+    files = spark.read.format("binaryFile").load(list(paths.values()))
     actual = files.select(F.regexp_extract("path", r"([^/]+)$", 1).alias("file"), "length",
         F.sha2("content", 256).alias("sha256")).collect()
     observed = {r["file"]: (r["length"], r["sha256"]) for r in actual}
@@ -115,6 +155,8 @@ def verify(spark, cfg):
         raise ValueError("Bytes/hash de archivos remotos no coinciden")
     record = {"status": "PASS", "config": asdict(cfg), "config_sha256": cfg.fingerprint,
         "manifest_sha256": digest(canonical(m)), "manifest": m, "remote_files": len(actual)}
+    if reused:
+        record["certified_reuse"] = reused
     # Duración se registra aparte para que Repair no cambie el contrato inmutable.
     put_record(spark, cfg.table("input_audit"), record)
     return {"status": "PASS", "elapsed_seconds": time.monotonic() - start, "files": len(actual)}

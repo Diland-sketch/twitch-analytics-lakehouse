@@ -1,0 +1,474 @@
+{
+  "authorization": "PENDING_EXPLICIT_USER_APPROVAL",
+  "job_id": 685945819660775,
+  "proposed_release": "bulk_50m_r001",
+  "parameters": {
+    "rows": 50000000,
+    "release": "bulk_50m_r001",
+    "manifest_path": "/Volumes/workspace/twitch_bulk_experimental/source_parts/m50m/manifest.json",
+    "predecessor": "workspace.twitch_bulk_experimental.publication_bulk_10m_r001",
+    "max_input_bytes": 6442450944
+  },
+  "code_source": "Candidate PR #8 head after tests; Job remote code not updated yet",
+  "files_to_transfer": 401,
+  "total_transfer_bytes": 3969502311,
+  "max_file_bytes": 10010980,
+  "staging": "C:\\movielens-datawarehouse\\twitch-scale-50m\\work\\transfer_ready\\m50m",
+  "staging_method": "400 hard links, no duplicate Parquet bytes; original data preserved",
+  "manifest_sha256": "17595c746c42e62910480c0574bbfe948c6fb713b22d25833343112d4442d6d0",
+  "source_sha256": "2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e",
+  "reused_parts": 100,
+  "reused_source_rows": 10000000,
+  "reused_bronze_tables": 11,
+  "new_bronze_blocks": 40,
+  "new_table_count": 88,
+  "targets": [
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_10000001_11000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_11000001_12000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_12000001_13000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_13000001_14000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_14000001_15000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_15000001_16000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_16000001_17000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_17000001_18000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_18000001_19000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_19000001_20000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_20000001_21000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_21000001_22000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_22000001_23000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_23000001_24000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_24000001_25000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_25000001_26000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_26000001_27000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_27000001_28000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_28000001_29000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_29000001_30000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_30000001_31000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_31000001_32000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_32000001_33000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_33000001_34000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_34000001_35000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_35000001_36000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_36000001_37000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_37000001_38000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_38000001_39000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_39000001_40000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_40000001_41000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_41000001_42000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_42000001_43000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_43000001_44000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_44000001_45000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_45000001_46000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_46000001_47000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_47000001_48000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_48000001_49000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_2475bcbf0a8f_49000001_50000000",
+      "kind": "bronze",
+      "expected_source_rows": 1000000
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_10000001_11000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_11000001_12000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_12000001_13000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_13000001_14000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_14000001_15000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_15000001_16000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_16000001_17000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_17000001_18000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_18000001_19000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_19000001_20000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_20000001_21000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_21000001_22000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_22000001_23000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_23000001_24000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_24000001_25000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_25000001_26000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_26000001_27000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_27000001_28000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_28000001_29000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_29000001_30000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_30000001_31000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_31000001_32000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_32000001_33000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_33000001_34000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_34000001_35000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_35000001_36000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_36000001_37000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_37000001_38000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_38000001_39000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_39000001_40000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_40000001_41000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_41000001_42000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_42000001_43000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_43000001_44000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_44000001_45000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_45000001_46000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_46000001_47000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_47000001_48000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_48000001_49000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.receipt_2475bcbf0a8f_49000001_50000000",
+      "kind": "block_receipt",
+      "expected_report_rows": 1
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.input_audit_bulk_50m_r001",
+      "kind": "input_audit"
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.bronze_ledger_bulk_50m_r001",
+      "kind": "bronze_ledger"
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.rejects_bulk_50m_r001",
+      "kind": "rejects"
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.silver_bulk_50m_r001",
+      "kind": "silver"
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.silver_audit_bulk_50m_r001",
+      "kind": "silver_audit"
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.gold_bulk_50m_r001",
+      "kind": "gold"
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.gold_audit_bulk_50m_r001",
+      "kind": "gold_audit"
+    },
+    {
+      "table": "workspace.twitch_bulk_experimental.publication_bulk_50m_r001",
+      "kind": "publication"
+    }
+  ],
+  "remote_volume_bytes_before": 1101626657,
+  "remote_volume_bytes_after_expected_transfer": 5071128968,
+  "remaining_storage_and_fair_use_quota": "Not numerically observable; no capacity guarantee",
+  "job_limits": {
+    "max_concurrent_runs": 1,
+    "serial_tasks": 5,
+    "max_retries": 0,
+    "disable_auto_optimization": true,
+    "job_timeout_seconds": 7200,
+    "task_timeout_seconds": 3600
+  },
+  "new_paid_resources": false,
+  "kafka_publish": false,
+  "react_changes": false,
+  "recoverability": "Upload only missing names after rechecking existing remote hashes; never overwrite. Repair only with identical config and certified unchanged Delta block versions; partial inconsistent tables stop without auto-deletion or append."
+}

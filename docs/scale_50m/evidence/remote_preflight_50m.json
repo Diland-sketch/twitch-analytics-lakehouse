@@ -1,0 +1,38 @@
+{
+  "observed_local_time": "2026-11-22T23:50:06.833627-05:00",
+  "method": "Read-only authenticated Databricks SDK/Spark notebook output observed through UI",
+  "publication_table": "workspace.twitch_bulk_experimental.publication_bulk_10m_r001",
+  "publication_state": "CONFIRMED",
+  "status": "PASS",
+  "seven_checks_pass": true,
+  "run_id": 547592370095797,
+  "run_state": "SUCCESS",
+  "active_bulk_runs": [],
+  "certified_bronze_blocks": 11,
+  "versions_unchanged": true,
+  "volume_directories": [
+    {
+      "directory": "m100k/",
+      "files": 2,
+      "bytes": 9950016
+    },
+    {
+      "directory": "m10m/",
+      "files": 101,
+      "bytes": 992520643
+    },
+    {
+      "directory": "m1m/",
+      "files": 11,
+      "bytes": 99155998
+    }
+  ],
+  "volume_observed_bytes": 1101626657,
+  "compute_probe_select_1": 1,
+  "serverless_remaining_numeric_quota": "NOT_EXPOSED",
+  "volume_free_capacity_bytes": "NOT_EXPOSED",
+  "billing_query_rows": [],
+  "billing_scope": "system.billing.usage filtered by batch Job 685945819660775; empty result does not prove zero cost",
+  "mass_transfer_started": false,
+  "job_50m_started": false
+}

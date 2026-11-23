@@ -1,7 +1,11 @@
 {
   "milestone_rows":10000000,
   "route":"SPARK_BATCH_NOT_KAFKA",
-  "status":"PREPARATION_ALLOWED_JOB_PENDING_EXACT_MANIFEST_CHECK",
+  "status":"SOURCE_PREPARED_WITHIN_LIMIT_WAITING_REMOTE_UPLOAD_AND_HASH_GATE",
+  "exact_parquet_bytes":992487125,
+  "manifest_bytes":33518,
+  "files_including_manifest":101,
+  "all_ten_prefix_part_hashes_match_confirmed_1m":true,
   "previous_milestone":{"rows":1000000,"run_id":697148119262366,"status":"PASS","job_result":"SUCCESS","duration_ms":112889,"bronze_delta_bytes":79477380},
   "input_limit_bytes":1342177280,
   "local_free_bytes_before_preparation":55432294400,
