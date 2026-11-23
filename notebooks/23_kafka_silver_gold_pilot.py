@@ -6,8 +6,12 @@
 import os
 import sys
 import json
-dbutils.widgets.text("repo_root", "/Workspace/Users/dilandlopez10@gmail.com/twitch-analytics-i3")
-dbutils.widgets.text("release_id", "kafka_b7_r001")
+dbutils.widgets.text("execution_mode", "manual")
+if dbutils.widgets.get("execution_mode") == "job":
+    from kafka_ingest.orchestration import execute
+    dbutils.notebook.exit(json.dumps(execute(spark, dbutils, {"transform"})))
+dbutils.widgets.text("repo_root", "")
+dbutils.widgets.text("release_id", "")
 repo = dbutils.widgets.get("repo_root")
 if not repo.startswith("/Workspace/") or not os.path.isdir(repo):
     raise ValueError("Configurar Git folder absoluto de esta rama")

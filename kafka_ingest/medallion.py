@@ -20,8 +20,8 @@ class Release:
     name: str = "kafka_b7_r001"
 
     def __post_init__(self):
-        if not re.fullmatch(r"kafka_b7_r[0-9]{3}", self.name):
-            raise ValueError("Release permitida: kafka_b7_rNNN, solo esquema experimental")
+        if not re.fullmatch(r"kafka_b(?:0|[1-9][0-9]*)_r[0-9]{3}", self.name):
+            raise ValueError("Release permitida: kafka_bVERSION_rNNN, solo esquema experimental")
 
     def table(self, stage):
         if stage not in STAGES and not re.fullmatch(r"failure_[a-f0-9]{32}", stage):
@@ -29,12 +29,12 @@ class Release:
         return f"{NAMESPACE}.{stage}_{self.name}"
 
 
-def validate_authorization(report, binding):
+def validate_authorization(report, binding, bronze_version=BRONZE_VERSION):
     m = validate_manifest(binding["manifest"])
     required = {"audit_contract": "twitch-native-source-audit-v2", "status": "PASS",
         "source_coverage_status": "PASS", "identity_integrity_status": "PASS",
         "status_scope": "SOURCE_IDENTITY_AND_CONTENT_ONLY", "bronze_table": BRONZE,
-        "bronze_delta_version": BRONZE_VERSION, "bronze_rows": 1000, "source_rows": 1000,
+        "bronze_delta_version": bronze_version, "bronze_rows": 1000, "source_rows": 1000,
         "distinct_event_ids": 1000, "first_source_row": 1, "last_source_row": 1000,
         "missing_source_rows": 0, "missing_event_ids": 0, "unexpected_event_ids": 0,
         "duplicate_event_id_rows": 0, "identity_errors": 0, "key_identity_errors": 0,

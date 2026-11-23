@@ -37,7 +37,7 @@ class MedallionGuards(unittest.TestCase):
                 validate_authorization({**report, field: value}, binding)
 
     def test_destinations_are_versioned_and_cannot_target_r01(self):
-        for name in ("r01", "kafka_b8_r001", "../twitch_lakehouse", "kafka_b7_r001; DROP"):
+        for name in ("r01", "kafka_b08_r001", "../twitch_lakehouse", "kafka_b7_r001; DROP"):
             with self.assertRaises(ValueError):
                 Release(name)
         for stage in STAGES:

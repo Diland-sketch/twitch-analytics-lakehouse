@@ -8,6 +8,11 @@ import json
 import os
 import sys
 import uuid
+dbutils.widgets.text("execution_mode", "manual")
+if dbutils.widgets.get("execution_mode") == "job":
+    # En remote Git Jobs el root del checkout se añade a sys.path por Databricks.
+    from kafka_ingest.orchestration import execute
+    dbutils.notebook.exit(json.dumps(execute(spark, dbutils, {"verify_bronze"})))
 dbutils.widgets.text("repo_root", "")
 dbutils.widgets.text("manifest_json", "")
 dbutils.widgets.text("pipeline_id", "")
