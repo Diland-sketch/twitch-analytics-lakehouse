@@ -1,6 +1,6 @@
 # Databricks notebook source
 # Auditoría batch de la Bronze NATIVA. No inicia un segundo consumidor Kafka.
-# Ejecutar después de detener normalmente el pipeline; nunca Full refresh.
+# Lee una versión Delta fija; no detiene ni reinicia el pipeline. Nunca Full refresh.
 # Reiniciar Python después de actualizar Git, antes de ejecutar este notebook.
 
 # COMMAND ----------
@@ -18,7 +18,8 @@ if not repo.startswith("/Workspace/") or not os.path.isdir(repo):
 sys.path.insert(0, repo)
 
 from kafka_ingest.contracts import canonical, validate_manifest
-from kafka_ingest.bronze import NAMESPACE, project, audit
+from kafka_ingest.bronze import NAMESPACE
+from kafka_ingest.native_audit import audit_native
 from twitch_lakehouse.storage import write_new
 
 m = validate_manifest(json.loads(dbutils.widgets.get("manifest_json")))
@@ -35,22 +36,17 @@ else:
     write_new(spark, spark.createDataFrame([(binding,)], "binding_json STRING"), binding_table)
 
 # COMMAND ----------
-native = spark.table(table)
-if not {"key", "value", "kafka_source"}.issubset(set(native.columns)):
-    raise RuntimeError("Contrato Bronze nativo inesperado: inspeccionar esquema, no inferir metadata")
 # Congelar la versión Delta comprobada; nunca auditar una tabla mientras cambia.
 version = spark.sql(f"DESCRIBE HISTORY {table} LIMIT 1").first()["version"]
 native = spark.read.option("versionAsOf", version).table(table)
-if native.limit(5001).count() > 5000:
-    raise RuntimeError("La tabla supera el límite de este auditor de piloto")
-metadata = native.select("key", "value", "kafka_source.*")
-normalized = project(metadata, m["source_cluster_id"])
-view = "native_pilot_" + uuid.uuid4().hex
-normalized.createOrReplaceTempView(view)
-report = audit(spark, m, table=view)
+report = audit_native(native, m)
+report["audit_table"] = NAMESPACE + ".audit_" + uuid.uuid4().hex
 report.update({"ingestion_mode": "LAKEFLOW_CONNECT_KAFKA_BETA", "bronze_table": table,
     "bronze_delta_version": version, "pipeline_id": pipeline_id, "update_id": update_id})
 write_new(spark, spark.createDataFrame([(canonical(report),)], "report_json STRING"), report["audit_table"])
+print({"source_coverage_status": report["source_coverage_status"],
+       "identity_integrity_status": report["identity_integrity_status"],
+       "offset_audit_status": report["offset_audit_status"], "audit_table": report["audit_table"]})
 if report["status"] != "PASS":
     raise RuntimeError("Cobertura nativa FAIL; reporte conservado en " + report["audit_table"])
 dbutils.notebook.exit(canonical(report))

@@ -1,5 +1,10 @@
 # Lakeflow Kafka Beta: decisión y piloto de 1.000 filas
 
+> Actualización posterior: el usuario confirmó ingesta remota de 1.000 filas desde
+> full_a.csv.gz, Bronze solo key/value. Para auditar esa ejecución usar la
+> [adaptación binaria del notebook 22](kafka_native_binary_audit.md). Los estados
+> pendientes de esta evaluación inicial describen la entrega anterior.
+
 Esta guía es la decisión vigente; [la guía Spark](kafka_databricks_pilot.md) conserva
 el respaldo implementado. **Ninguna ruta está validada remotamente en esta entrega.**
 

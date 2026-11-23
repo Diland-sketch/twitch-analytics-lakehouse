@@ -75,6 +75,17 @@ class SparkPilotTests(unittest.TestCase):
         self.assertEqual(report["offsets"], [{"partition": 0, "min_offset": 0,
             "max_offset": 999, "offset_count": 1000}])
 
+    def test_native_binary_only_uses_real_spark_binary_rows(self):
+        from pyspark.sql import functions as F
+        from kafka_ingest.native_audit import audit_native
+        # Clave del productor real es event_id UTF-8; ninguna columna metadata.
+        binary = self.kafka.select(F.sha2(F.concat_ws("|", F.lit(self.m["source_sha256"]),
+            F.col("offset") + 1), 256).cast("binary").alias("key"), "value")
+        report = audit_native(binary, self.m)
+        self.assertEqual(report["source_coverage_status"], "PASS")
+        self.assertEqual(report["offset_audit_status"], "NO VERIFICABLE")
+        self.assertIsNone(report["offsets"])
+
 
 if __name__ == "__main__":
     unittest.main()

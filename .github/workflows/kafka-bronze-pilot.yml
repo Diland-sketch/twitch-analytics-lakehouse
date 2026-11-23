@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m compileall -q kafka_ingest notebooks/21_kafka_bronze_pilot.py notebooks/22_kafka_native_verify_pilot.py
-      - run: python -m unittest tests.test_kafka_ingest tests.test_kafka_native_bundle tests.test_full_dataset_prepare tests.test_full_dataset_pipeline tests.test_full_dataset_10m -v
+      - run: python -m unittest tests.test_kafka_ingest tests.test_kafka_native_bundle tests.test_kafka_native_audit tests.test_full_dataset_prepare tests.test_full_dataset_pipeline tests.test_full_dataset_10m -v
   spark-fixtures:
     runs-on: ubuntu-latest
     timeout-minutes: 15
