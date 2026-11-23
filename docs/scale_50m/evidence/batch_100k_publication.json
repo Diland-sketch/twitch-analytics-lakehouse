@@ -1,0 +1,25 @@
+{
+  "evidence_method": "Persisted publication table read through authenticated Databricks notebook SDK/UI",
+  "job_id": 685945819660775,
+  "run_id": 37327879921671,
+  "job_result_state": "SUCCESS",
+  "run_duration_ms": 117849,
+  "task_execution_ms": {"verify": 18000, "bronze": 25000, "silver": 24000, "gold": 15000, "publish": 20000},
+  "code_commit": "a673d0e67a848dbbb815b474d72beb87c1412165",
+  "publication_table": "workspace.twitch_bulk_experimental.publication_bulk_100k_r001",
+  "report": {
+    "checks": {"gold_exact":true,"gold_interactions":true,"gold_minutes":true,"rejects_persisted":true,"silver_balance":true,"silver_unique_keys":true,"source_balance":true},
+    "config": {"manifest_path":"/Volumes/workspace/twitch_bulk_experimental/source_parts/m100k/manifest.json","max_input_bytes":134217728,"predecessor":"","release":"bulk_100k_r001","rows":100000},
+    "config_sha256":"bf35adf4d143af051be5890e98cddc2de3a1814f0aa3db51580c67297a9334e6",
+    "delta_details":{"bronze":{"numFiles":2,"sizeInBytes":7895148},"gold":{"numFiles":1,"sizeInBytes":154841},"rejects":{"numFiles":0,"sizeInBytes":0},"silver":{"numFiles":1,"sizeInBytes":1287872}},
+    "estimated_minutes":3182310,
+    "gold_interactions":100000,
+    "gold_streamers":17702,
+    "publication_state":"CONFIRMED",
+    "route":"SPARK_BATCH_NOT_KAFKA",
+    "rows":100000,
+    "silver":{"business_duplicates":0,"config_sha256":"bf35adf4d143af051be5890e98cddc2de3a1814f0aa3db51580c67297a9334e6","rejected_rows":0,"rejects_version":1,"rows_read":100000,"silver_rows":100000,"silver_version":1,"status":"PASS","valid_rows":100000},
+    "source_sha256":"2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e",
+    "status":"PASS"
+  }
+}

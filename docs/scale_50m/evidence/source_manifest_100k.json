@@ -1,0 +1,22 @@
+{
+  "schema_version": "twitch-bulk-parquet-v1",
+  "source_name": "full_a.csv.gz",
+  "source_sha256": "2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e",
+  "source_bytes": 6943679726,
+  "source_physical_rows": 474676930,
+  "requested_rows": 100000,
+  "extracted_rows": 100000,
+  "parts": [
+    {
+      "file": "part-000000.parquet",
+      "rows": 100000,
+      "first_row": 1,
+      "last_row": 100000,
+      "bytes": 9949256,
+      "sha256": "3d536ec272baa4f9b5012d2b49bedd9310e224131b71225b86c09b5233fc6976",
+      "row_digest": "09f32d2ce555c3c249191124a269c5e14c6acecc1f080fb2ec2e2dc103ff3641"
+    }
+  ],
+  "elapsed_seconds": 7.322164200013503,
+  "semantics": "Observed historical chat connections, not active viewers"
+}

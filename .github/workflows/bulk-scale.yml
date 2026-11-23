@@ -1,0 +1,32 @@
+name: Bulk scale contracts and Spark fixtures
+on:
+  push:
+    branches: [codex/twitch-scale-50m]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pyarrow==23.0.1
+      - run: python -m compileall -q bulk_lakehouse notebooks/30_bulk_batch_job.py
+      - run: python -m unittest tests.test_bulk tests.test_bulk_kafka tests.test_bulk_preflight -v
+  spark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: pip install pyspark==3.5.8
+      - run: python -m unittest tests.test_bulk_spark -v

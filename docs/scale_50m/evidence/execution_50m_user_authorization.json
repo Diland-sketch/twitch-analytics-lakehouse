@@ -1,0 +1,18 @@
+{
+  "recorded_utc": "2026-11-23T05:06:27.146302+00:00",
+  "authorization": "Explicit user approval: option 2, 401-file transfer and one conditional 50M Job run, free existing workspace resources only.",
+  "job_id": 685945819660775,
+  "release": "bulk_50m_r001",
+  "approved_commit": "dc680daab17402b8781173b1e5af20832303a78b",
+  "transfer_files": 401,
+  "transfer_bytes": 3969502311,
+  "destination": "/Volumes/workspace/twitch_bulk_experimental/source_parts/m50m/",
+  "stop_on_quota_storage_or_integrity_failure": true,
+  "overwrite_allowed": false,
+  "automatic_retries": 0,
+  "max_concurrent_runs": 1,
+  "paid_resources_allowed": false,
+  "kafka_changes_allowed": false,
+  "react_changes_allowed": false,
+  "merge_allowed": false
+}

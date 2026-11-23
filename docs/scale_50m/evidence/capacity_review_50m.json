@@ -1,0 +1,14 @@
+{
+  "milestone_rows":50000000,
+  "route":"SPARK_BATCH_NOT_KAFKA",
+  "status":"PREPARATION_ALLOWED_JOB_PENDING_EXACT_MANIFEST_CHECK",
+  "previous_milestone":{"rows":10000000,"run_id":547592370095797,"status":"PASS","job_result":"SUCCESS","duration_ms":272594,"bronze_delta_bytes":796925417,"silver_delta_bytes":130845028},
+  "input_limit_bytes":6442450944,
+  "local_free_bytes_before_preparation":54476025856,
+  "memory_strategy":"100k Parquet fragments, buffers of 10k rows; distributed Spark, no collection of full source to driver",
+  "recovery_strategy":"Reuse 11 confirmed Bronze block receipts covering 1..10M; add 40 blocks of 1M; global Silver/Gold; 2h Job timeout and zero automatic retries",
+  "remaining_free_edition_fair_use_quota":"Unknown numeric remainder. Previous real 10M succeeded without resource/quota error. Stop at any such error and preserve partial results.",
+  "paid_resources_created":false,
+  "kafka_publication":false,
+  "next_gate":"Exact manifest <=6GiB, unchanged first 100 part hashes, remote upload complete, distributed file SHA check and previous publication CONFIRMED. Do not infer 50M processed from preparation/upload."
+}

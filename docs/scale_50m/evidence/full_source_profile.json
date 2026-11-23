@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "source_name": "full_a.csv.gz",
+  "source_bytes": 6943679726,
+  "source_sha256": "2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e",
+  "expanded_bytes": 18895365102,
+  "expanded_sha256": "c6ae169eceb003cc64a2224edd20d8a2b10a30766939c67935dabe828d5b8a2d",
+  "physical_rows": 474676930,
+  "source_mtime_ns": 1795388496287013700,
+  "elapsed_seconds": 184.6974731000373,
+  "observed_utc": "2026-11-23T02:25:01.220570+00:00",
+  "scope": "FULL_LOCAL_GZIP_SCAN_NOT_DATABRICKS_PROCESSING"
+}
