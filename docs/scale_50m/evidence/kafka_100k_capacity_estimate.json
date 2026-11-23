@@ -1,0 +1,1 @@
+{"average_bytes":511.12589,"estimated_payload_and_key_bytes":51112589,"excludes":"Kafka protocol overhead, replication, compression and storage amplification","maximum_bytes":528,"rows":100000,"scope":"CAPACITY_ESTIMATE_NOT_PUBLICATION","source_sha256":"2475bcbf0a8fdf1864c78bd62aee35384f9ae371788348fa0b8831c5d827e11e"}
