@@ -1,0 +1,26 @@
+{
+  "status": "LAUNCHED_NOT_YET_CONFIRMED",
+  "scope": "SPARK_BATCH_NOT_KAFKA",
+  "job_id": 685945819660775,
+  "run_id": 489507533579031,
+  "release": "bulk_50m_r001",
+  "code_commit": "dc680daab17402b8781173b1e5af20832303a78b",
+  "idempotency_token": "twitch-bulk-50m-r001-dc680da-authorized",
+  "input_rows": 50000000,
+  "manifest_path": "/Volumes/workspace/twitch_bulk_experimental/source_parts/m50m/manifest.json",
+  "predecessor": "workspace.twitch_bulk_experimental.publication_bulk_10m_r001",
+  "max_input_bytes": 6442450944,
+  "new_targets_absent_before_start": 88,
+  "prior_certified_blocks": 11,
+  "prior_block_versions_before_run": 1,
+  "configuration_verified": {
+    "max_concurrent_runs": 1,
+    "max_retries": 0,
+    "retry_on_timeout": false,
+    "disable_auto_optimization": true,
+    "job_timeout_seconds": 7200,
+    "task_timeout_seconds": 3600
+  },
+  "new_paid_resources_created": false,
+  "processing_success_not_yet_asserted": true
+}

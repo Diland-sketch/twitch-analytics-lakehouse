@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "scope": "REMOTE_FILE_INTEGRITY_NOT_SPARK_PROCESSING",
+  "new_files": 401,
+  "new_bytes": 3969502311,
+  "parquet_files_verified": 500,
+  "reused_files": 100,
+  "source_rows_covered_by_verified_files": 50000000,
+  "manifest_sha256": "17595c746c42e62910480c0574bbfe948c6fb713b22d25833343112d4442d6d0",
+  "inventory_sha256": "4d82aaad9686bcde7a9435b1bfa40a193b216656c2eeabedafd7a853f58e8ad1",
+  "elapsed_seconds": 93.53143967100004,
+  "completed_utc": "2026-11-23T05:07:46.019266+00:00",
+  "method": "Authenticated Databricks notebook, Python filesystem streaming SHA256 over all 500 Parquet; exact destination names/sizes and approved manifest SHA asserted; no Spark transformations or writes in this check."
+}
